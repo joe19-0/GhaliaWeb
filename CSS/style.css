@@ -1,0 +1,38 @@
+@import url('https://fonts.googleapis.com/css2?family=El+Messiri:wght@400..700&family=Tajawal:wght@200;300;400;500;700;800;900&display=swap');
+:root {
+    /* Logo Colors */
+    --main-color: #704a4f;
+    --sec-color: #a87b7d;
+    --accent-color: #e6d5d6;
+
+    /* UI Colors */
+    --bg-main: #f9f7fa;
+    --bg-card: #fff;
+    --text-main: #332c2d;
+    --text-sec: #7e7375;
+
+    /* Specials Events Colors */
+    --hover: #59393d;
+    --border-color: #e2d8da;
+
+    /* Fonts */
+    --heading-font: "El Messiri", sans-serif;
+    --body-font:  "Tajawal", sans-serif;
+}
+
+body {
+    background-color: var(--bg-main);
+    color: var(--text-main);
+    font-family: var(--body-font);
+}
+h1,h2,h3 {
+    color: var(--main-color);
+    font-family: var(--heading-font);
+}
+p {
+    color: var(--text-sec);
+}
+img {
+    width: 100px;
+    height: 100px;
+}
