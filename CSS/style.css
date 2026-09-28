@@ -74,6 +74,9 @@ header nav {
     justify-content: space-between;
     align-items: center;
 }
+header nav .logo {
+    height: 100px;
+}
 header nav ul {
     display: flex;
     align-items: center;
@@ -259,9 +262,27 @@ header nav .close-btn {
     }
     header nav .logo {
         order: 2;
+        height: 80px;
+    }
+    header nav .logo img {
+        width: 80px;
+        height: 80px;
     }
     header nav .icons i {
         font-size: 22px;
+    }
+}
+@media (max-width: 425px) {
+    header nav .bars,
+    header nav .icons i {
+        font-size: 18px;
+    }
+    header nav .logo {
+        height: 70px;
+    }
+    header nav .logo img {
+        width: 70px;
+        height: 70px;
     }
 }
 
@@ -389,6 +410,9 @@ main .lan-pg .left .down {
 }
 
 @media (max-width: 1200px) {
+    body {
+        padding-top: 120px;
+    }
     main .lan-pg {
         flex-direction: column;
         gap: 80px;
@@ -489,9 +513,13 @@ main .lan-pg .left .down {
         width: 100%;
         height: 250px;
     }
+    main .lan-pg .left .up {
+        right: 0;
+    }
     main .lan-pg .left .up,
     main .lan-pg .left .down {
         font-size: 14px;
+        width: 100%;
     }
     main .lan-pg .right h1 {
         font-size: 32px;
@@ -516,5 +544,19 @@ main .lan-pg .left .down {
 @media (max-width: 500px) {
     main .lan-pg .left .up {
         font-size: 12px;
+    }
+    header nav .links {
+        width: 100%;
+        left: -100%;
+    }
+}
+@media (max-width: 386px) {
+    main .lan-pg .left .up {
+        text-align: center;
+        top: -65px;
+    }
+    main .lan-pg .left .down {
+        text-align: center;
+        bottom: -65px;
     }
 }
