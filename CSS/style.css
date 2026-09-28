@@ -272,6 +272,12 @@ header nav .close-btn {
         font-size: 22px;
     }
 }
+@media (max-width: 500px) {
+    header nav .links {
+        width: 100%;
+        left: -100%;
+    }
+}
 @media (max-width: 425px) {
     header nav .bars,
     header nav .icons i {
@@ -544,10 +550,6 @@ main .lan-pg .left .down {
 @media (max-width: 500px) {
     main .lan-pg .left .up {
         font-size: 12px;
-    }
-    header nav .links {
-        width: 100%;
-        left: -100%;
     }
 }
 @media (max-width: 386px) {
