@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="آراء وتقييمات عميلات متجر غالية للصابون الطبيعي ومنتجات العناية بالبشرة المصنوعة يدوياً بكل حب.">
+    <title>آراء عميلاتنا | غالية للصابون الطبيعي</title>
+    <link rel="icon" href="images/logo.png">
+    <link rel="stylesheet" href="CSS/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <nav>
+                <a href="index.html" class="logo"><img src="images/logo.png" alt="شعار غالية"></a>
+                <div class="menu-overlay" id="menu-overlay"></div>
+                <ul class="links">
+                    <div class="upper">
+                        <h3>القائمة</h3>
+                        <i class="fa-solid fa-xmark close-btn"></i>
+                    </div>
+                    <li><a href="index.html">الرئيسية</a></li>
+                    <li class="have-box">
+                        <a href="index.html#rec-products">تشكيلتنا</a>
+                        <div class="box">
+                            <i class="fa-solid fa-caret-up arrow-up"></i>
+                            <a href="index.html#rec-products">الصابون الطبيعي</a>
+                            <a href="index.html#rec-products">العناية بالبشرة</a>
+                            <a href="index.html#rec-products">العروض والهدايا</a>
+                        </div>
+                    </li>
+                    <li><a href="index.html#about">من نحن</a></li>
+                    <li class="active"><a href="reviews.html">التقييمات</a></li>
+                </ul>
+                <div class="icons">
+                    <div class="icon-wrapper" id="fav-icon-wrapper">
+                        <i class="fa-regular fa-heart" id="fav-icon"></i>
+                        <span class="badge" id="fav-count" style="display:none;">0</span>
+                    </div>
+                    <div class="icon-wrapper" id="cart-icon-wrapper">
+                        <i class="fa-solid fa-box-open header-cart" id="cart-icon"></i>
+                        <span class="badge" id="cart-count" style="display:none;">0</span>
+                    </div>
+                </div>
+                <i class="fa-solid fa-bars bars"></i>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <!-- Hero / Intro for Reviews Page -->
+            <section class="reviews-page-hero">
+                <span class="reviews-badge">
+                    <i class="fa-solid fa-sparkles"></i>
+                    تجارب حقيقية وموثوقة
+                </span>
+                <h1>ماذا قالت عميلاتنا عن غالية؟</h1>
+                <p>كل كلمة طيبة من عميلاتنا هي فخر لغالية ودافعنا لنقدم لكِ دائماً أرقى المنتجات الطبيعية المصنوعة بكل حب وإتقان.</p>
+
+                <!-- Reviews Quick Stats -->
+                <div class="reviews-stats">
+                    <div class="review-stat-card">
+                        <i class="fa-solid fa-star"></i>
+                        <div class="stat-text">
+                            <strong>5.0 / 5</strong>
+                            <span>متوسط التقييم العام</span>
+                        </div>
+                    </div>
+                    <div class="review-stat-card">
+                        <i class="fa-solid fa-heart"></i>
+                        <div class="stat-text">
+                            <strong id="reviews-total-count">+500</strong>
+                            <span>عميلة سعيدة ومميزة</span>
+                        </div>
+                    </div>
+                    <div class="review-stat-card">
+                        <i class="fa-solid fa-shield-heart"></i>
+                        <div class="stat-text">
+                            <strong>100%</strong>
+                            <span>مكونات طبيعية وآمنة</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- All Reviews Grid -->
+            <section class="reviews-section" style="margin-bottom: 40px;">
+                <div class="reviews-page-grid" id="all-reviews-container">
+                    <div class="products-loading" style="grid-column: 1 / -1;">
+                        <i class="fa-solid fa-spinner fa-spin"></i>
+                        <p>جاري تحميل جميع آراء العميلات...</p>
+                    </div>
+                </div>
+
+                <!-- Back Navigation Box -->
+                <div class="reviews-back-box">
+                    <a href="products.html" class="reviews-back-btn">
+                        <i class="fa-solid fa-bag-shopping"></i>
+                        تصفحي تشكيلة منتجاتنا الآن
+                    </a>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Floating WhatsApp Button -->
+    <a href="https://wa.me/201204308077?text=مرحباً،%20أريد%20الاستفسار%20عن%20منتجات%20غالية" class="whatsapp-float" target="_blank" aria-label="تواصلي معنا عبر واتساب">
+        <i class="fa-brands fa-whatsapp"></i>
+    </a>
+
+    <!-- Cart Drawer -->
+    <div class="cart-overlay" id="cart-overlay"></div>
+    <div class="cart-drawer" id="cart-drawer">
+        <div class="cart-drawer-header">
+            <h3>سلة التسوق</h3>
+            <i class="fa-solid fa-xmark" id="close-cart"></i>
+        </div>
+        <div class="cart-items" id="cart-items">
+            <div class="cart-empty">
+                <i class="fa-solid fa-box-open"></i>
+                <p>سلتكِ فارغة حتى الآن.</p>
+                <a href="index.html#rec-products" class="shop-btn" id="cart-shop-link">تصفحي المنتجات</a>
+            </div>
+        </div>
+        <div class="cart-footer" id="cart-footer" style="display:none;">
+            <div class="cart-total">
+                <span>الإجمالي:</span>
+                <span id="cart-total-price">0 ج.م</span>
+            </div>
+
+            <!-- Customer Details Form -->
+            <div class="customer-info-form">
+                <p class="customer-form-title"><i class="fa-solid fa-truck-ramp-box"></i> بيانات التوصيل</p>
+                <div class="cart-form-group">
+                    <label for="order-customer-name">الاسم بالكامل <span class="req">*</span></label>
+                    <input type="text" id="order-customer-name" placeholder="مثال: سارة محمد" required>
+                </div>
+                <div class="cart-form-group">
+                    <label for="order-customer-phone">رقم الهاتف <span class="req">*</span></label>
+                    <input type="tel" id="order-customer-phone" placeholder="مثال: 01xxxxxxxxx" required>
+                </div>
+                <div class="cart-form-group">
+                    <label for="order-customer-address">العنوان بالتفصيل (المدينة / المنطقة / الشارع) <span class="req">*</span></label>
+                    <input type="text" id="order-customer-address" placeholder="مثال: القاهرة - مدينة نصر - شارع..." required>
+                </div>
+                <div class="cart-form-group">
+                    <label for="order-customer-notes">ملاحظات إضافية (اختياري)</label>
+                    <input type="text" id="order-customer-notes" placeholder="أي تفاصيل خاصة بالتوصيل أو التغليف">
+                </div>
+            </div>
+
+            <button class="checkout-btn" id="checkout-btn">
+                <i class="fa-brands fa-whatsapp"></i>
+                إتمام الطلب عبر واتساب
+            </button>
+        </div>
+    </div>
+
+    <!-- Favorites Drawer -->
+    <div class="fav-overlay" id="fav-overlay"></div>
+    <div class="fav-drawer" id="fav-drawer">
+        <div class="fav-drawer-header">
+            <h3>المفضلة</h3>
+            <i class="fa-solid fa-xmark" id="close-fav"></i>
+        </div>
+        <div class="fav-items" id="fav-items">
+            <div class="fav-empty">
+                <i class="fa-regular fa-heart"></i>
+                <p>لم تضيفي أي منتج إلى المفضلة بعد.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast"></div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <a href="index.html"><img src="images/logo.png" alt="شعار غالية"></a>
+                    <p>متجر غالية للصابون الطبيعي — نصنع لكِ لحظات دلال يومية بمكونات طبيعية فاخرة.</p>
+                    <div class="footer-social">
+                        <a href="https://www.instagram.com/ghaliaa__10?srtk=MTkyaGl3bXAxZm5xeg%3D%3D" target="_blank" aria-label="إنستغرام"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="https://www.facebook.com/share/19c9CjjEmw/?mibextid=wwXIfr" target="_blank" aria-label="فيسبوك"><i class="fa-brands fa-facebook"></i></a>
+                        <a href="https://wa.me/201204308077" target="_blank" aria-label="واتساب"><i class="fa-brands fa-whatsapp"></i></a>
+                    </div>
+                </div>
+                <div class="footer-links">
+                    <h4>روابط سريعة</h4>
+                    <ul>
+                        <li><a href="index.html">الرئيسية</a></li>
+                        <li><a href="products.html">تشكيلتنا</a></li>
+                        <li><a href="index.html#about">من نحن</a></li>
+                        <li><a href="reviews.html">التقييمات</a></li>
+                        <li><a href="index.html#contact">تواصلي معنا</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>معلومات</h4>
+                    <ul>
+                        <li><a href="#">سياسة الإرجاع</a></li>
+                        <li><a href="#">الشحن والتوصيل</a></li>
+                        <li><a href="#">الأسئلة الشائعة</a></li>
+                        <li><a href="#">سياسة الخصوصية</a></li>
+                    </ul>
+                </div>
+                <div class="footer-contact">
+                    <h4>تواصلي معنا</h4>
+                    <p><i class="fa-brands fa-whatsapp"></i> واتساب متاح يومياً</p>
+                    <a href="https://wa.me/201204308077?text=مرحباً،%20أريد%20الاستفسار%20عن%20منتجات%20غالية" target="_blank" class="footer-wa-btn">
+                        <i class="fa-brands fa-whatsapp"></i>
+                        ابدئي التسوق الآن
+                    </a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>جميع الحقوق محفوظة &copy; <span class="year"></span> غالية للصابون الطبيعي</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="JS/main.js"></script>
+    <script src="JS/reviews.js"></script>
+</body>
+</html>
