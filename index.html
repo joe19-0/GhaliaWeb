@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="متجر غالية يقدم لكِ مجموعة فاخرة من الصابون الطبيعي المصمم خصيصاً لجمالكِ. دللي بشرتكِ مع منتجاتنا التي تجمع بين الروائح الساحرة والعناية الفائقة.">
+    <title>غالية | صابون طبيعي وعناية بالبشرة</title>
+    <link rel="icon" href="images/logo.png">
+    <link rel="stylesheet" href="CSS/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <nav>
+                <a href="index.html" class="logo"><img src="images/logo.png" alt="شعار غالية"></a>
+                <div class="menu-overlay" id="menu-overlay"></div>
+                <ul class="links">
+                    <div class="upper">
+                        <h3>القائمة</h3>
+                        <i class="fa-solid fa-xmark close-btn"></i>
+                    </div>
+                    <li class="active"><a href="index.html">الرئيسية</a></li>
+                    <li class="have-box">
+                        <a href="products.html">تشكيلتنا</a>
+                        <div class="box">
+                            <i class="fa-solid fa-caret-up arrow-up"></i>
+                            <a href="products.html">الصابون الطبيعي</a>
+                            <a href="products.html">العناية بالبشرة</a>
+                            <a href="products.html">العروض والهدايا</a>
+                        </div>
+                    </li>
+                    <li><a href="#about">من نحن</a></li>
+                    <li><a href="reviews.html">التقييمات</a></li>
+                </ul>
+                <div class="icons">
+                    <div class="icon-wrapper" id="fav-icon-wrapper">
+                        <i class="fa-regular fa-heart" id="fav-icon"></i>
+                        <span class="badge" id="fav-count" style="display:none;">0</span>
+                    </div>
+                    <div class="icon-wrapper" id="cart-icon-wrapper">
+                        <i class="fa-solid fa-box-open header-cart" id="cart-icon"></i>
+                        <span class="badge" id="cart-count" style="display:none;">0</span>
+                    </div>
+                </div>
+                <i class="fa-solid fa-bars bars"></i>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+
+            <!-- Landing Page Section -->
+            <section class="lan-pg">
+                <div class="right">
+                    <h1>غالية</h1>
+                    <p>اكتشفي تشكيلة غالية للصابون الطبيعي. منتجات عناية بالبشرة مصنوعة يدوياً من أفضل المكونات الطبيعية والزيوت العطرية لمنح بشرتكِ النعومة والترطيب الذي تستحقه.</p>
+                    <div class="btns">
+                        <a href="products.html" class="shop-btn">تسوقي الآن</a>
+                        <a href="#contact" class="contact-btn">تواصلي معنا</a>
+                    </div>
+                    <div class="info">
+                        <div class="icon">
+                            <i class="fa-solid fa-hand-holding-dollar"></i>
+                            <p>أسعار مميزة</p>
+                        </div>
+                        <div class="icon">
+                            <i class="fa-solid fa-award"></i>
+                            <p>جودة فاخرة</p>
+                        </div>
+                        <div class="icon">
+                            <i class="fa-solid fa-truck-fast"></i>
+                            <p>شحن سريع</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="left">
+                    <p class="up">
+                        <i class="fa-solid fa-gem"></i>
+                        مكونات طبيعية 100% مصنوعة بحب للحفاظ على نضارة بشرتكِ.
+                    </p>
+                    <div class="imgs">
+                        <img src="images/lan-pg1.jpg" class="img1" alt="صابون طبيعي فاخر">
+                        <img src="images/lan-pg2.jpg" class="img2" alt="عناية طبيعية بالبشرة">
+                        <img src="images/lan-pg3.jpg" class="img3" alt="منتجات غالية الطبيعية">
+                    </div>
+                    <p class="down">
+                        <i class="fa-solid fa-leaf"></i>
+                        جودة فاخرة وعناية متكاملة بأسعار تناسب ميزانيتكِ.
+                    </p>
+                </div>
+            </section>
+
+            <!-- Recommended Products Section -->
+            <section class="rec-products" id="rec-products">
+                <div class="upper">
+                    <div class="title">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+                        <h2>ترشيحاتنا لكِ</h2>
+                    </div>
+                    <p>تشكيلة مختارة بعناية لتمنح بشرتكِ الدلال والنضارة التي تستحقها.</p>
+                </div>
+                <div class="products" id="products-container">
+                    <div class="products-loading">
+                        <i class="fa-solid fa-spinner fa-spin"></i>
+                        <p>جاري تحميل المنتجات...</p>
+                    </div>
+                </div>
+                <div class="lower">
+                    <p id="products-count"></p>
+                    <div class="line"></div>
+                    <a href="products.html" class="see-more" id="see-more-btn"><i class="fa-solid fa-boxes-stacked"></i> اكتشفي المزيد من المنتجات</a>
+                </div>
+            </section>
+
+            <!-- About Us Section -->
+            <section class="about-section" id="about">
+                <div class="about-header">
+                    <div class="title">
+                        <i class="fa-solid fa-heart"></i>
+                        <h2>من نحن</h2>
+                    </div>
+                    <p>قصتنا مع الطبيعة والجمال</p>
+                </div>
+                <div class="about-content">
+                    <div class="about-text">
+                        <h3>غالية — صُنعت بحب لكِ</h3>
+                        <p>
+                            غالية متجر متخصص في تقديم أفضل منتجات الصابون الطبيعي المصنوعة يدوياً بمكونات 100% طبيعية.
+                            كل قطعة صابون تُصنع بعناية فائقة لتمنح بشرتكِ الترطيب والنعومة التي تحتاجها، مع روائح عطرية ساحرة
+                            تجعل تجربة الاستحمام لحظة دلال حقيقية.
+                        </p>
+                        <p>
+                            نؤمن أن الجمال الحقيقي ينبع من الطبيعة. لهذا نختار كل مكوناتنا بعناية لضمان أعلى جودة وأأمن
+                            المنتجات لبشرتكِ الغالية. منتجاتنا خالية من المواد الكيميائية الضارة ومناسبة لجميع أنواع البشرة.
+                        </p>
+                        <div class="about-features">
+                            <div class="feature">
+                                <i class="fa-solid fa-seedling"></i>
+                                <span>مكونات طبيعية 100%</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fa-solid fa-hands"></i>
+                                <span>مصنوعة يدوياً بحب</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fa-solid fa-shield-halved"></i>
+                                <span>آمنة لجميع أنواع البشرة</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fa-solid fa-flask"></i>
+                                <span>خالية من الكيماويات</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="about-img">
+                        <img src="images/soup7.jpg" alt="منتجات غالية الطبيعية">
+                        <div class="about-badge">
+                            <i class="fa-solid fa-star"></i>
+                            <span>أكثر من 500+ عميلة سعيدة</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Reviews Section -->
+            <section class="reviews-section" id="reviews">
+                <div class="reviews-header">
+                    <div class="title">
+                        <i class="fa-solid fa-star"></i>
+                        <h2>ماذا قالت عميلاتنا</h2>
+                    </div>
+                    <p>آراء حقيقية من عميلاتنا الغاليات</p>
+                </div>
+                <div class="reviews-grid" id="reviews-container">
+                    <div class="products-loading">
+                        <i class="fa-solid fa-spinner fa-spin"></i>
+                        <p>جاري تحميل آراء العميلات...</p>
+                    </div>
+                </div>
+                <div class="lower">
+                    <p id="reviews-count"></p>
+                    <div class="line"></div>
+                    <a href="reviews.html" class="see-more" id="see-more-reviews-btn">
+                        <i class="fa-solid fa-heart"></i>
+                        اكتشفي المزيد من الآراء
+                    </a>
+                </div>  
+            </section>
+
+            <!-- Contact Section -->
+            <section class="contact-section" id="contact">
+                <div class="contact-header">
+                    <div class="title">
+                        <i class="fa-solid fa-envelope"></i>
+                        <h2>تواصلي معنا</h2>
+                    </div>
+                    <p>نحن هنا للإجابة على استفساراتكِ وتلبية طلباتكِ</p>
+                </div>
+                <div class="contact-content">
+                    <div class="contact-info">
+                        <a href="https://wa.me/201204308077?text=مرحباً،%20أريد%20الاستفسار%20عن%20منتجات%20غالية" target="_blank" class="contact-item">
+                            <i class="fa-brands fa-whatsapp"></i>
+                            <div>
+                                <strong>واتساب</strong>
+                                <p>تواصلي عبر واتساب</p>
+                            </div>
+                        </a>
+                        <a href="https://www.instagram.com/ghaliaa__10?srtk=MTkyaGl3bXAxZm5xeg%3D%3D" target="_blank" class="contact-item">
+                            <i class="fa-brands fa-instagram"></i>
+                            <div>
+                                <strong>إنستغرام</strong>
+                                <p>@ghaliaa__10</p>
+                            </div>
+                        </a>
+                        <a href="https://www.facebook.com/share/19c9CjjEmw/?mibextid=wwXIfr" target="_blank" class="contact-item">
+                            <i class="fa-brands fa-facebook"></i>
+                            <div>
+                                <strong>فيسبوك</strong>
+                                <p>@غالية</p>
+                            </div>
+                        </a>
+                        <div class="contact-item">
+                            <i class="fa-solid fa-clock"></i>
+                            <div>
+                                <strong>ساعات العمل</strong>
+                                <span>طول الاسبوع | 24 ساعة</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="contact-form">
+                        <h3>أرسلي استفسارك</h3>
+                        <form id="contact-form" onsubmit="handleContactForm(event)">
+                            <div class="form-group">
+                                <label for="name">اسمكِ</label>
+                                <input type="text" id="name" placeholder="أدخلي اسمكِ الكريم" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="phone">رقم الهاتف</label>
+                                <input type="tel" id="phone" placeholder="رقم هاتفكِ للتواصل" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="message">رسالتكِ</label>
+                                <textarea id="message" rows="4" placeholder="اكتبي استفسارك أو طلبكِ هنا..." required></textarea>
+                            </div>
+                            <button type="submit" class="submit-btn">
+                                <i class="fa-brands fa-whatsapp"></i>
+                                أرسلي عبر واتساب
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- Floating WhatsApp Button -->
+    <a href="https://wa.me/201204308077?text=مرحباً،%20أريد%20الاستفسار%20عن%20منتجات%20غالية" class="whatsapp-float" target="_blank" aria-label="تواصلي معنا عبر واتساب">
+        <i class="fa-brands fa-whatsapp"></i>
+    </a>
+
+    <!-- Cart Drawer -->
+    <div class="cart-overlay" id="cart-overlay"></div>
+    <div class="cart-drawer" id="cart-drawer">
+        <div class="cart-drawer-header">
+            <h3>سلة التسوق</h3>
+            <i class="fa-solid fa-xmark" id="close-cart"></i>
+        </div>
+        <div class="cart-items" id="cart-items">
+            <div class="cart-empty">
+                <i class="fa-solid fa-box-open"></i>
+                <p>سلتكِ فارغة حتى الآن.</p>
+                <a href="#rec-products" class="shop-btn" id="cart-shop-link">تصفحي المنتجات</a>
+            </div>
+        </div>
+        <div class="cart-footer" id="cart-footer" style="display:none;">
+            <div class="cart-total">
+                <span>الإجمالي:</span>
+                <span id="cart-total-price">0 ج.م</span>
+            </div>
+
+            <!-- Customer Details Form -->
+            <div class="customer-info-form">
+                <p class="customer-form-title"><i class="fa-solid fa-truck-ramp-box"></i> بيانات التوصيل</p>
+                <div class="cart-form-group">
+                    <label for="order-customer-name">الاسم بالكامل <span class="req">*</span></label>
+                    <input type="text" id="order-customer-name" placeholder="مثال: سارة محمد" required>
+                </div>
+                <div class="cart-form-group">
+                    <label for="order-customer-phone">رقم الهاتف <span class="req">*</span></label>
+                    <input type="tel" id="order-customer-phone" placeholder="مثال: 01xxxxxxxxx" required>
+                </div>
+                <div class="cart-form-group">
+                    <label for="order-customer-address">العنوان بالتفصيل (المدينة / المنطقة / الشارع) <span class="req">*</span></label>
+                    <input type="text" id="order-customer-address" placeholder="مثال: القاهرة - مدينة نصر - شارع..." required>
+                </div>
+                <div class="cart-form-group">
+                    <label for="order-customer-notes">ملاحظات إضافية (اختياري)</label>
+                    <input type="text" id="order-customer-notes" placeholder="أي تفاصيل خاصة بالتوصيل أو التغليف">
+                </div>
+            </div>
+
+            <button class="checkout-btn" id="checkout-btn">
+                <i class="fa-brands fa-whatsapp"></i>
+                إتمام الطلب عبر واتساب
+            </button>
+        </div>
+    </div>
+
+    <!-- Favorites Drawer -->
+    <div class="fav-overlay" id="fav-overlay"></div>
+    <div class="fav-drawer" id="fav-drawer">
+        <div class="fav-drawer-header">
+            <h3>المفضلة</h3>
+            <i class="fa-solid fa-xmark" id="close-fav"></i>
+        </div>
+        <div class="fav-items" id="fav-items">
+            <div class="fav-empty">
+                <i class="fa-regular fa-heart"></i>
+                <p>لم تضيفي أي منتج إلى المفضلة بعد.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Modal -->
+    <div class="modal-overlay" id="modal-overlay"></div>
+    <div class="product-modal" id="product-modal">
+        <div class="modal-header">
+            <i class="fa-solid fa-xmark" id="close-modal"></i>
+        </div>
+        <div class="modal-body" id="modal-content"></div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast"></div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <a href="index.html"><img src="images/logo.png" alt="شعار غالية"></a>
+                    <p>متجر غالية للصابون الطبيعي — نصنع لكِ لحظات دلال يومية بمكونات طبيعية فاخرة.</p>
+                    <div class="footer-social">
+                        <a href="https://www.instagram.com/ghaliaa__10?srtk=MTkyaGl3bXAxZm5xeg%3D%3D" target="_blank" aria-label="إنستغرام"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="https://www.facebook.com/share/19c9CjjEmw/?mibextid=wwXIfr" target="_blank" aria-label="فيسبوك"><i class="fa-brands fa-facebook"></i></a>
+                        <a href="https://wa.me/201204308077" target="_blank" aria-label="واتساب"><i class="fa-brands fa-whatsapp"></i></a>
+                    </div>
+                </div>
+                <div class="footer-links">
+                    <h4>روابط سريعة</h4>
+                    <ul>
+                        <li><a href="index.html">الرئيسية</a></li>
+                        <li><a href="products.html">تشكيلتنا</a></li>
+                        <li><a href="#about">من نحن</a></li>
+                        <li><a href="reviews.html">التقييمات</a></li>
+                        <li><a href="#contact">تواصلي معنا</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>معلومات</h4>
+                    <ul>
+                        <li><a href="#">سياسة الإرجاع</a></li>
+                        <li><a href="#">الشحن والتوصيل</a></li>
+                        <li><a href="#">الأسئلة الشائعة</a></li>
+                        <li><a href="#">سياسة الخصوصية</a></li>
+                    </ul>
+                </div>
+                <div class="footer-contact">
+                    <h4>تواصلي معنا</h4>
+                    <p><i class="fa-brands fa-whatsapp"></i> واتساب متاح يومياً</p>
+                    <a href="https://wa.me/201204308077?text=مرحباً،%20أريد%20الاستفسار%20عن%20منتجات%20غالية" target="_blank" class="footer-wa-btn">
+                        <i class="fa-brands fa-whatsapp"></i>
+                        ابدئي التسوق الآن
+                    </a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>جميع الحقوق محفوظة &copy; <span class="year"></span> غالية للصابون الطبيعي</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="JS/main.js"></script>
+    <script src="JS/index.js"></script>
+</body>
+</html>
