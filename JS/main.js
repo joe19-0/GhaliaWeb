@@ -5,13 +5,15 @@ const closeBtn = document.querySelector(".close-btn");
 const menuOverlay = document.getElementById("menu-overlay");
 
 function openMenu() {
-    linksUl.classList.add("active");
+    if (linksUl) linksUl.classList.add("active");
     if (menuOverlay) menuOverlay.classList.add("active");
+    document.body.style.overflow = "hidden";
 }
 
 function closeMenu() {
-    linksUl.classList.remove("active");
+    if (linksUl) linksUl.classList.remove("active");
     if (menuOverlay) menuOverlay.classList.remove("active");
+    document.body.style.overflow = "";
 }
 
 if (bars) bars.addEventListener("click", openMenu);
