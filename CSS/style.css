@@ -1550,6 +1550,13 @@ main .reviews-section .lower .see-more:hover {
     color: var(--main-color);
     font-weight: 700;
 }
+.cart-item-price .cart-price-note {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-sec);
+    margin-top: 2px;
+}
 .cart-item-qty {
     display: flex;
     align-items: center;
@@ -1762,6 +1769,18 @@ main .reviews-section .lower .see-more:hover {
 .fav-item-price span {
     font-size: 11px;
     font-weight: 500;
+}
+.fav-item-price .fav-spec-price {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--main-color);
+}
+.fav-item-price .fav-spec-sub {
+    display: block;
+    font-size: 10.5px;
+    font-weight: 600;
+    color: var(--text-sec);
+    margin-top: 2px;
 }
 .fav-item-actions {
     display: flex;

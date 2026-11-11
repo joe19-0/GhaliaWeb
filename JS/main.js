@@ -116,6 +116,57 @@ if (cartShopLink) {
     cartShopLink.addEventListener("click", closeCart);
 }
 
+// ===== Common Helpers =====
+function hasVal(val) {
+    return val !== null && val !== undefined && String(val).trim() !== '' && String(val).trim() !== 'undefined' && String(val).trim() !== 'null';
+}
+
+function escHtml(str) {
+    if (str === null || str === undefined) return '';
+    return String(str)
+        .replace(/&/g,  '&amp;')
+        .replace(/</g,  '&lt;')
+        .replace(/>/g,  '&gt;')
+        .replace(/"/g,  '&quot;')
+        .replace(/'/g,  '&#39;');
+}
+
+function isSpecBoxItem(item) {
+    if (!item) return false;
+    return item.category === 'specBox' ||
+           item.id === 33 ||
+           item.productId === 33 ||
+           String(item.name || '').includes('بوكس');
+}
+
+function formatCartPrice(item) {
+    if (isSpecBoxItem(item)) {
+        return 'يبدأ من 300 ج.م <span class="cart-price-note">(حسب التنسيق)</span>';
+    }
+    const num = parseFloat(item.price);
+    if (!isNaN(num) && isFinite(num) && String(item.price).trim() !== '') {
+        return `${num} ج.م`;
+    }
+    const str = String(item.price || '').trim();
+    if (str.includes('ج.م')) return escHtml(str);
+    if (str) return escHtml(str);
+    return 'يُحدد لاحقاً';
+}
+
+function formatFavPrice(item) {
+    if (isSpecBoxItem(item)) {
+        return '<span class="fav-spec-price">يبدأ من 300 <span>ج.م</span></span> <span class="fav-spec-sub">(حسب التنسيق)</span>';
+    }
+    const num = parseFloat(item.price);
+    if (!isNaN(num) && isFinite(num) && String(item.price).trim() !== '') {
+        return `${num} <span>ج.م</span>`;
+    }
+    const str = String(item.price || '').trim();
+    if (str.includes('ج.م')) return escHtml(str);
+    if (str) return escHtml(str);
+    return 'يُحدد لاحقاً';
+}
+
 function renderCart() {
     if (window.cart.length === 0) {
         cartItemsDiv.innerHTML = `
@@ -127,26 +178,53 @@ function renderCart() {
         cartFooter.style.display = "none";
         return;
     }
-    let total = 0;
+
+    let numericTotal = 0;
+    let hasCustomItem = false;
+    let customBoxCount = 0;
+
     cartItemsDiv.innerHTML = window.cart.map(function (item, idx) {
-        total += item.price * item.qty;
+        const qty = Math.max(1, parseInt(item.qty, 10) || 1);
+        const num = parseFloat(item.price);
+        const isNum = !isNaN(num) && isFinite(num) && String(item.price).trim() !== '';
+
+        if (isNum) {
+            numericTotal += num * qty;
+        } else {
+            hasCustomItem = true;
+            if (isSpecBoxItem(item)) {
+                customBoxCount += qty;
+            }
+        }
+
         return `
             <div class="cart-item-card">
-                <img src="${item.img}" alt="${item.name}">
+                <img src="${escHtml(item.img)}" alt="${escHtml(item.name)}">
                 <div class="cart-item-info">
-                    <p class="cart-item-name">${item.name}</p>
-                    <p class="cart-item-price">${item.price} ج.م</p>
+                    <p class="cart-item-name">${escHtml(item.name)}</p>
+                    <p class="cart-item-price">${formatCartPrice(item)}</p>
                     <div class="cart-item-qty">
                         <button onclick="changeQty(${idx}, -1)">−</button>
-                        <span>${item.qty}</span>
+                        <span>${qty}</span>
                         <button onclick="changeQty(${idx}, 1)">+</button>
                     </div>
                 </div>
                 <i class="fa-solid fa-trash cart-item-remove" onclick="removeCartItem(${idx})"></i>
             </div>`;
     }).join("");
+
     cartFooter.style.display = "block";
-    cartTotalPrice.textContent = total + " ج.م";
+
+    let displayTotal = "";
+    if (!hasCustomItem) {
+        displayTotal = numericTotal + " ج.م";
+    } else if (numericTotal === 0) {
+        displayTotal = "يبدأ من " + (300 * (customBoxCount || 1)) + " ج.م (حسب التنسيق)";
+    } else {
+        displayTotal = numericTotal + " ج.م + بوكس (يبدأ من " + (300 * (customBoxCount || 1)) + " ج.م)";
+    }
+
+    cartTotalPrice.textContent = displayTotal;
 }
 
 // ===== Checkout =====
@@ -162,16 +240,41 @@ function buildOrderMessage(customer) {
     }
     msg += "─────────────────────\n";
     msg += "📦 *تفاصيل المنتجات:*\n";
-    let total = 0;
+    let numericTotal = 0;
+    let hasCustomItem = false;
+    let customBoxCount = 0;
+
     window.cart.forEach(function (item, i) {
-        const lineTotal = item.price * item.qty;
-        total += lineTotal;
+        const qty = Math.max(1, parseInt(item.qty, 10) || 1);
+        const num = parseFloat(item.price);
+        const isNum = !isNaN(num) && isFinite(num) && String(item.price).trim() !== '';
+
         msg += `\n${i + 1}. *${item.name}*\n`;
-        msg += `   الكمية: ${item.qty} قطعة\n`;
-        msg += `   السعر: ${item.price} ج.م × ${item.qty} = ${lineTotal} ج.م\n`;
+        msg += `   الكمية: ${qty} قطعة\n`;
+
+        if (isNum) {
+            const lineTotal = num * qty;
+            numericTotal += lineTotal;
+            msg += `   السعر: ${num} ج.م × ${qty} = ${lineTotal} ج.م\n`;
+        } else {
+            hasCustomItem = true;
+            if (isSpecBoxItem(item)) {
+                customBoxCount += qty;
+                msg += `   السعر: يبدأ من 300 ج.م (تنسيق مخصص حسب الاختيار)\n`;
+            } else {
+                msg += `   السعر: ${item.price || 'حسب التنسيق'}\n`;
+            }
+        }
     });
+
     msg += "\n─────────────────────\n";
-    msg += `💰 *الإجمالي النهائي: ${total} ج.م*\n`;
+    if (!hasCustomItem) {
+        msg += `💰 *الإجمالي النهائي: ${numericTotal} ج.م*\n`;
+    } else if (numericTotal === 0) {
+        msg += `💰 *الإجمالي: يبدأ من ${300 * (customBoxCount || 1)} ج.م (يُحدد بدقة حسب محتويات البوكس)*\n`;
+    } else {
+        msg += `💰 *الإجمالي: ${numericTotal} ج.م + سعر البوكس (يبدأ من ${300 * (customBoxCount || 1)} ج.م حسب التنسيق)*\n`;
+    }
     msg += "─────────────────────\n";
     msg += "أرجو تأكيد الطلب والبدء بالتجهيز. شكراً 🌸";
     return msg;
@@ -278,20 +381,6 @@ if (favIcon) favIcon.addEventListener("click", openFav);
 if (closeFavBtn) closeFavBtn.addEventListener("click", closeFav);
 if (favOverlay) favOverlay.addEventListener("click", closeFav);
 
-function hasVal(val) {
-    return val !== null && val !== undefined && String(val).trim() !== '' && String(val).trim() !== 'undefined' && String(val).trim() !== 'null';
-}
-
-function escHtml(str) {
-    if (str === null || str === undefined) return '';
-    return String(str)
-        .replace(/&/g,  '&amp;')
-        .replace(/</g,  '&lt;')
-        .replace(/>/g,  '&gt;')
-        .replace(/"/g,  '&quot;')
-        .replace(/'/g,  '&#39;');
-}
-
 // ===== Check if product/variant is favorited =====
 window.isFavorite = function (productId, variantId) {
     if (!Array.isArray(window.favorites)) return false;
@@ -383,7 +472,7 @@ function renderFavorites() {
                 <div class="fav-item-info">
                     <p class="fav-item-name">${escHtml(item.name)}</p>
                     ${labelHtml}
-                    <p class="fav-item-price">${item.price} <span>ج.م</span></p>
+                    <p class="fav-item-price">${formatFavPrice(item)}</p>
                 </div>
                 <div class="fav-item-actions">
                     <button type="button" class="fav-item-goto" title="عرض في المتجر" aria-label="عرض في المتجر">
@@ -507,25 +596,43 @@ const modalContent = document.getElementById("modal-content");
 function openModal(product) {
     var infoHtml = '';
     if (hasVal(product.benf)) {
-        infoHtml += '<p><i class="fa-solid fa-leaf" style="color:var(--sec-color);margin-left:6px;"></i>' + product.benf + '</p>';
+        infoHtml += '<p><i class="fa-solid fa-leaf" style="color:var(--sec-color);margin-left:6px;"></i>' + escHtml(product.benf) + '</p>';
     }
     if (hasVal(product.ingred)) {
-        infoHtml += '<p><i class="fa-solid fa-flask" style="color:var(--sec-color);margin-left:6px;"></i>' + product.ingred + '</p>';
+        infoHtml += '<p><i class="fa-solid fa-flask" style="color:var(--sec-color);margin-left:6px;"></i>' + escHtml(product.ingred) + '</p>';
     }
     if (hasVal(product.wieght)) {
-        infoHtml += '<p><i class="fa-solid fa-weight-hanging" style="color:var(--sec-color);margin-left:6px;"></i>' + product.wieght + '</p>';
+        infoHtml += '<p><i class="fa-solid fa-weight-hanging" style="color:var(--sec-color);margin-left:6px;"></i>' + escHtml(product.wieght) + '</p>';
+    }
+    if (hasVal(product.note)) {
+        infoHtml += '<p style="color:var(--main-color);font-weight:600;"><i class="fa-solid fa-circle-info" style="color:var(--sec-color);margin-left:6px;"></i>' + escHtml(product.note) + '</p>';
     }
     var infoDiv = infoHtml ? '<div class="modal-info">' + infoHtml + '</div>' : '';
 
-    var priceHtml = hasVal(product.price) ? '<p class="modal-price">' + product.price + ' <span>ج.م</span></p>' : '';
-    var waUrl = "https://wa.me/201204308077?text=" + encodeURIComponent("أريد الطلب: " + product.name + (hasVal(product.price) ? " - " + product.price + " ج.م" : ""));
+    var isBox = isSpecBoxItem(product);
+    var num = parseFloat(product.price);
+    var isNum = !isNaN(num) && isFinite(num) && String(product.price).trim() !== '';
 
-    modalContent.innerHTML = `
-        <img src="${product.img}" alt="${product.name}">
-        <h3>${product.name}</h3>
-        ${infoDiv}
-        ${priceHtml}
-        <div class="modal-actions">
+    var priceHtml = '';
+    if (isBox) {
+        priceHtml = '<div class="modal-specbox-pricing"><p class="modal-price">يبدأ من 300 <span>ج.م</span></p><p class="modal-price-note"><i class="fa-solid fa-wand-magic-sparkles"></i> السعر النهائي حسب عدد ونوع قطع الصابون والفواحات المختارة</p></div>';
+    } else if (isNum) {
+        priceHtml = '<p class="modal-price">' + num + ' <span>ج.م</span></p>';
+    } else if (hasVal(product.price)) {
+        priceHtml = '<p class="modal-price">' + escHtml(product.price) + '</p>';
+    }
+
+    var waUrl = isBox
+        ? 'https://wa.me/201204308077?text=' + encodeURIComponent('مرحباً، أريد طلب وتنسيق بوكس الهدايا المميز من متجر غالية 🎁')
+        : 'https://wa.me/201204308077?text=' + encodeURIComponent('أريد الطلب: ' + product.name + (isNum ? ' - ' + num + ' ج.م' : ''));
+
+    var modalActionsHtml = isBox
+        ? `<div class="modal-actions">
+            <a class="modal-wa-order specbox-wa-fullbtn" href="${waUrl}" target="_blank" rel="noopener">
+                <i class="fa-brands fa-whatsapp"></i> نسّقي واطلبي بوكسكِ الآن
+            </a>
+          </div>`
+        : `<div class="modal-actions">
             <button class="modal-add-cart" id="base-modal-add-cart" type="button">
                 <i class="fa-solid fa-cart-plus"></i> أضيفيه للسلة
             </button>
@@ -533,6 +640,13 @@ function openModal(product) {
                 <i class="fa-brands fa-whatsapp"></i> اطلبيه الآن
             </a>
         </div>`;
+
+    modalContent.innerHTML = `
+        <img src="${escHtml(product.img)}" alt="${escHtml(product.name)}">
+        <h3>${escHtml(product.name)}</h3>
+        ${infoDiv}
+        ${priceHtml}
+        ${modalActionsHtml}`;
 
     var cartBtn = document.getElementById("base-modal-add-cart");
     if (cartBtn) {

@@ -557,11 +557,12 @@ function attachProductEvents(products) {
         });
     });
 
-    // Card click → modal (skip fav, cart, variant chip)
+    // Card click → modal (skip fav, cart, specbox wa link, variant chip)
     container.querySelectorAll('.product').forEach(function (card) {
         card.addEventListener('click', function (e) {
             if (e.target.closest('.fav-product') ||
                 e.target.closest('.add-cart-btn') ||
+                e.target.closest('.specbox-card-btn') ||
                 e.target.closest('.variant-chip')) return;
             var id = parseInt(card.dataset.id);
             var product = products.find(function (p) { return p.id === id; });
@@ -592,8 +593,8 @@ function attachProductEvents(products) {
         });
     });
 
-    // Add to cart
-    container.querySelectorAll('.add-cart-btn').forEach(function (btn) {
+    // Add to cart (only for actual button elements, not the <a> link for specBox)
+    container.querySelectorAll('button.add-cart-btn').forEach(function (btn) {
         btn.addEventListener('click', function (e) {
             e.preventDefault();
             e.stopPropagation();
