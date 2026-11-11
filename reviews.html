@@ -18,18 +18,21 @@
                 <a href="index.html" class="logo"><img src="images/logo.png" alt="شعار غالية"></a>
                 <div class="menu-overlay" id="menu-overlay"></div>
                 <ul class="links">
-                    <div class="upper">
-                        <h3>القائمة</h3>
-                        <i class="fa-solid fa-xmark close-btn"></i>
-                    </div>
+                    <li class="menu-upper-li" style="list-style:none;">
+                        <div class="upper">
+                            <h3>القائمة</h3>
+                            <i class="fa-solid fa-xmark close-btn"></i>
+                        </div>
+                    </li>
                     <li><a href="index.html">الرئيسية</a></li>
                     <li class="have-box">
-                        <a href="index.html#rec-products">تشكيلتنا</a>
+                        <a href="products.html">تشكيلتنا</a>
                         <div class="box">
                             <i class="fa-solid fa-caret-up arrow-up"></i>
-                            <a href="index.html#rec-products">الصابون الطبيعي</a>
-                            <a href="index.html#rec-products">العناية بالبشرة</a>
-                            <a href="index.html#rec-products">العروض والهدايا</a>
+                            <a href="products.html?cat=soaps">الصابون الطبيعي</a>
+                            <a href="products.html?cat=diffuser">الفواحات</a>
+                            <a href="products.html?cat=deodrant">مزيل العرق</a>
+                            <a href="products.html?cat=specBox">بوكس الهدايا</a>
                         </div>
                     </li>
                     <li><a href="index.html#about">من نحن</a></li>
@@ -53,7 +56,7 @@
     <main>
         <div class="container">
             <!-- Hero / Intro for Reviews Page -->
-            <section class="reviews-page-hero">
+            <section class="reviews-page-hero reveal-on-scroll">
                 <span class="reviews-badge">
                     <i class="fa-solid fa-sparkles"></i>
                     تجارب حقيقية وموثوقة
@@ -88,7 +91,7 @@
             </section>
 
             <!-- All Reviews Grid -->
-            <section class="reviews-section" style="margin-bottom: 40px;">
+            <section class="reviews-section reveal-on-scroll" style="margin-bottom: 40px;">
                 <div class="reviews-page-grid" id="all-reviews-container">
                     <div class="products-loading" style="grid-column: 1 / -1;">
                         <i class="fa-solid fa-spinner fa-spin"></i>
@@ -108,7 +111,7 @@
     </main>
 
     <!-- Floating WhatsApp Button -->
-    <a href="https://wa.me/201204308077?text=مرحباً،%20أريد%20الاستفسار%20عن%20منتجات%20غالية" class="whatsapp-float" target="_blank" aria-label="تواصلي معنا عبر واتساب">
+    <a href="https://wa.me/201204308077?text=مرحباً،%20أريد%20الاستفسار%20عن%20منتجات%20غالية" class="whatsapp-float" target="_blank" rel="noopener" aria-label="تواصلي معنا عبر واتساب">
         <i class="fa-brands fa-whatsapp"></i>
     </a>
 
@@ -186,9 +189,9 @@
                     <a href="index.html"><img src="images/logo.png" alt="شعار غالية"></a>
                     <p>متجر غالية للصابون الطبيعي — نصنع لكِ لحظات دلال يومية بمكونات طبيعية فاخرة.</p>
                     <div class="footer-social">
-                        <a href="https://www.instagram.com/ghaliaa__10?srtk=MTkyaGl3bXAxZm5xeg%3D%3D" target="_blank" aria-label="إنستغرام"><i class="fa-brands fa-instagram"></i></a>
-                        <a href="https://www.facebook.com/share/19c9CjjEmw/?mibextid=wwXIfr" target="_blank" aria-label="فيسبوك"><i class="fa-brands fa-facebook"></i></a>
-                        <a href="https://wa.me/201204308077" target="_blank" aria-label="واتساب"><i class="fa-brands fa-whatsapp"></i></a>
+                        <a href="https://www.instagram.com/ghaliaa__10?srtk=MTkyaGl3bXAxZm5xeg%3D%3D" target="_blank" rel="noopener" aria-label="إنستغرام"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="https://www.facebook.com/share/19c9CjjEmw/?mibextid=wwXIfr" target="_blank" rel="noopener" aria-label="فيسبوك"><i class="fa-brands fa-facebook"></i></a>
+                        <a href="https://wa.me/201204308077" target="_blank" rel="noopener" aria-label="واتساب"><i class="fa-brands fa-whatsapp"></i></a>
                     </div>
                 </div>
                 <div class="footer-links">
@@ -196,24 +199,16 @@
                     <ul>
                         <li><a href="index.html">الرئيسية</a></li>
                         <li><a href="products.html">تشكيلتنا</a></li>
+                        <li><a href="index.html#special-box">بوكس الهدايا</a></li>
                         <li><a href="index.html#about">من نحن</a></li>
                         <li><a href="reviews.html">التقييمات</a></li>
                         <li><a href="index.html#contact">تواصلي معنا</a></li>
                     </ul>
                 </div>
-                <div class="footer-links">
-                    <h4>معلومات</h4>
-                    <ul>
-                        <li><a href="#">سياسة الإرجاع</a></li>
-                        <li><a href="#">الشحن والتوصيل</a></li>
-                        <li><a href="#">الأسئلة الشائعة</a></li>
-                        <li><a href="#">سياسة الخصوصية</a></li>
-                    </ul>
-                </div>
                 <div class="footer-contact">
                     <h4>تواصلي معنا</h4>
                     <p><i class="fa-brands fa-whatsapp"></i> واتساب متاح يومياً</p>
-                    <a href="https://wa.me/201204308077?text=مرحباً،%20أريد%20الاستفسار%20عن%20منتجات%20غالية" target="_blank" class="footer-wa-btn">
+                    <a href="https://wa.me/201204308077?text=مرحباً،%20أريد%20الاستفسار%20عن%20منتجات%20غالية" target="_blank" rel="noopener" class="footer-wa-btn">
                         <i class="fa-brands fa-whatsapp"></i>
                         ابدئي التسوق الآن
                     </a>

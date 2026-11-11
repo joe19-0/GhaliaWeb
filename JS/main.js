@@ -278,59 +278,225 @@ if (favIcon) favIcon.addEventListener("click", openFav);
 if (closeFavBtn) closeFavBtn.addEventListener("click", closeFav);
 if (favOverlay) favOverlay.addEventListener("click", closeFav);
 
+function hasVal(val) {
+    return val !== null && val !== undefined && String(val).trim() !== '' && String(val).trim() !== 'undefined' && String(val).trim() !== 'null';
+}
+
+function escHtml(str) {
+    if (str === null || str === undefined) return '';
+    return String(str)
+        .replace(/&/g,  '&amp;')
+        .replace(/</g,  '&lt;')
+        .replace(/>/g,  '&gt;')
+        .replace(/"/g,  '&quot;')
+        .replace(/'/g,  '&#39;');
+}
+
+// ===== Check if product/variant is favorited =====
+window.isFavorite = function (productId, variantId) {
+    if (!Array.isArray(window.favorites)) return false;
+    var targetProdId = String(productId);
+    var hasTargetVar = (variantId !== null && variantId !== undefined && String(variantId) !== '');
+    var targetVarId  = hasTargetVar ? String(variantId) : null;
+
+    return window.favorites.some(function (f) {
+        var fProdId = String(f.productId !== undefined ? f.productId : f.id);
+        var fHasVar = (f.variantId !== null && f.variantId !== undefined && String(f.variantId) !== '');
+        var fVarId  = fHasVar ? String(f.variantId) : null;
+
+        // If target specifically has a variant:
+        if (targetVarId !== null) {
+            if (fVarId !== null) {
+                return fProdId === targetProdId && fVarId === targetVarId;
+            }
+            // Match legacy favorites where f.id matches variantId
+            return String(f.id) === targetVarId || (fProdId === targetProdId && !f.label);
+        }
+
+        // Target has no variant specified (base product check)
+        return fProdId === targetProdId;
+    });
+};
+
+// ===== Sync all visible heart buttons on page =====
+window.updateHeartButtons = function () {
+    document.querySelectorAll('.product').forEach(function (card) {
+        var prodId = card.dataset.id;
+        if (!prodId) return;
+        var varId = card.dataset.selectedVariantId;
+        var btn = card.querySelector('.fav-product');
+        if (!btn) return;
+
+        var isFav = window.isFavorite(prodId, varId);
+        btn.classList.toggle('active', isFav);
+        var icon = btn.querySelector('i');
+        if (icon) {
+            if (isFav) {
+                icon.classList.remove('fa-regular');
+                icon.classList.add('fa-solid');
+            } else {
+                icon.classList.remove('fa-solid');
+                icon.classList.add('fa-regular');
+            }
+        }
+    });
+};
+
+// ===== Navigate to Exact Product on products.html =====
+window.goToProductFromFav = function (productId, variantId) {
+    if (typeof closeFav === 'function') closeFav();
+
+    var isProductsPage = window.location.pathname.endsWith('products.html') || window.location.href.indexOf('products.html') !== -1;
+
+    if (isProductsPage && typeof window.scrollToProduct === 'function') {
+        window.scrollToProduct(productId, variantId);
+    } else {
+        var url = 'products.html?prod=' + encodeURIComponent(productId);
+        if (variantId !== null && variantId !== undefined && String(variantId) !== '') {
+            url += '&var=' + encodeURIComponent(variantId);
+        }
+        url += '#product-' + productId;
+        window.location.href = url;
+    }
+};
+
 function renderFavorites() {
+    if (!favItemsDiv) return;
     if (window.favorites.length === 0) {
         favItemsDiv.innerHTML = `
             <div class="fav-empty">
                 <i class="fa-regular fa-heart"></i>
                 <p>لم تضيفي أي منتج إلى المفضلة بعد.</p>
+                <a href="products.html" class="shop-btn" onclick="closeFav()">تصفحي المنتجات</a>
             </div>`;
         return;
     }
     favItemsDiv.innerHTML = window.favorites.map(function (item, idx) {
+        var prodId = item.productId !== undefined ? item.productId : item.id;
+        var varId = (item.variantId !== null && item.variantId !== undefined) ? item.variantId : '';
+        var labelHtml = hasVal(item.label) ?
+            `<span class="fav-item-shape"><i class="fa-solid fa-shapes"></i> ${escHtml(item.label)}</span>` : '';
+
         return `
-            <div class="fav-item-card">
-                <img src="${item.img}" alt="${item.name}">
+            <div class="fav-item-card" data-product-id="${prodId}" data-variant-id="${varId}" onclick="goToProductFromFav(${prodId}, '${varId}')" role="button" tabindex="0" title="اضغطي للانتقال إلى هذا المنتج في المتجر">
+                <img src="${escHtml(item.img)}" alt="${escHtml(item.name)}">
                 <div class="fav-item-info">
-                    <p class="fav-item-name">${item.name}</p>
-                    <p class="fav-item-price">${item.price} ج.م</p>
+                    <p class="fav-item-name">${escHtml(item.name)}</p>
+                    ${labelHtml}
+                    <p class="fav-item-price">${item.price} <span>ج.م</span></p>
                 </div>
-                <i class="fa-solid fa-heart-crack fav-item-remove" onclick="removeFavItem(${idx})"></i>
+                <div class="fav-item-actions">
+                    <button type="button" class="fav-item-goto" title="عرض في المتجر" aria-label="عرض في المتجر">
+                        <i class="fa-solid fa-arrow-left"></i>
+                    </button>
+                    <i class="fa-solid fa-heart-crack fav-item-remove" title="إزالة من المفضلة" onclick="event.stopPropagation(); removeFavItem(${idx});" role="button" aria-label="إزالة من المفضلة"></i>
+                </div>
             </div>`;
     }).join("");
 }
 
 window.removeFavItem = function (idx) {
+    if (idx < 0 || idx >= window.favorites.length) return;
     const removed = window.favorites.splice(idx, 1)[0];
     saveFavorites();
     updateBadges();
     renderFavorites();
-    // Update heart button in product cards
-    document.querySelectorAll(".fav-product").forEach(function (btn) {
-        if (parseInt(btn.dataset.id) === removed.id) {
-            btn.classList.remove("active");
-            btn.querySelector("i").classList.replace("fa-solid", "fa-regular");
-        }
-    });
-    showToast("تمت إزالة المنتج من المفضلة 💔");
+    window.updateHeartButtons();
+    var labelTxt = removed.label ? " (" + removed.label + ")" : "";
+    showToast("تمت إزالة «" + (removed.name || "المنتج") + labelTxt + "» من المفضلة 💔");
 };
 
-window.toggleFavorite = function (product, btn) {
-    const idx = window.favorites.findIndex(function (p) { return p.id === product.id; });
-    if (idx === -1) {
-        window.favorites.push(product);
-        btn.classList.add("active");
-        btn.querySelector("i").classList.replace("fa-regular", "fa-solid");
-        showToast("تمت إضافة المنتج إلى المفضلة ❤️");
-    } else {
-        window.favorites.splice(idx, 1);
-        btn.classList.remove("active");
-        btn.querySelector("i").classList.replace("fa-solid", "fa-regular");
-        showToast("تمت إزالة المنتج من المفضلة 💔");
+window.toggleFavorite = function (product, btn, variant) {
+    if (!product) return;
+
+    // Detect variant from card if not explicitly provided
+    if (!variant && btn) {
+        var card = btn.closest('.product');
+        if (card && card.dataset.selectedVariantId && typeof getAllVariants === 'function') {
+            var vars = getAllVariants(product);
+            variant = vars.find(function (v) { return String(v.id) === String(card.dataset.selectedVariantId); });
+        }
     }
+
+    var targetProdId = String(product.id);
+    var targetVarId  = variant ? String(variant.id) : null;
+
+    var idx = window.favorites.findIndex(function (f) {
+        var fProdId = String(f.productId !== undefined ? f.productId : f.id);
+        var fHasVar = (f.variantId !== null && f.variantId !== undefined && String(f.variantId) !== '');
+        var fVarId  = fHasVar ? String(f.variantId) : null;
+
+        if (targetVarId !== null && fVarId !== null) {
+            return fProdId === targetProdId && fVarId === targetVarId;
+        }
+        if (targetVarId !== null) {
+            return String(f.id) === targetVarId || (fProdId === targetProdId && !f.label);
+        }
+        return fProdId === targetProdId;
+    });
+
+    if (idx === -1) {
+        var favItem = {
+            id: targetVarId !== null ? parseInt(targetVarId) : product.id,
+            productId: product.id,
+            variantId: targetVarId !== null ? parseInt(targetVarId) : null,
+            name: product.name,
+            label: (variant && hasVal(variant.label)) ? variant.label : (hasVal(product.label) ? product.label : ''),
+            img: (variant && hasVal(variant.img)) ? variant.img : product.img,
+            price: (variant && hasVal(variant.price)) ? variant.price : product.price,
+            category: product.category || ''
+        };
+        window.favorites.push(favItem);
+        var labelTxt = favItem.label ? " (" + favItem.label + ")" : "";
+        showToast("تمت إضافة «" + favItem.name + labelTxt + "» إلى المفضلة ❤️");
+    } else {
+        var removed = window.favorites.splice(idx, 1)[0];
+        var labelTxt2 = removed.label ? " (" + removed.label + ")" : "";
+        showToast("تمت إزالة «" + removed.name + labelTxt2 + "» من المفضلة 💔");
+    }
+
     saveFavorites();
     updateBadges();
+    renderFavorites();
+    window.updateHeartButtons();
 };
+
+// Auto-migrate legacy favorites when products load
+window.productsReady.then(function (products) {
+    if (!Array.isArray(products) || !products.length || !Array.isArray(window.favorites)) return;
+    var changed = false;
+    window.favorites.forEach(function (f) {
+        if (f.productId === undefined) {
+            f.productId = f.id;
+            changed = true;
+        }
+        var prod = products.find(function (p) { return p.id === f.productId; });
+        if (prod) {
+            if (!hasVal(f.name) && prod.name) { f.name = prod.name; changed = true; }
+            if (!hasVal(f.img) && prod.img)   { f.img = prod.img;   changed = true; }
+            if (!hasVal(f.price) && prod.price) { f.price = prod.price; changed = true; }
+            if (!hasVal(f.label)) {
+                if (hasVal(prod.label)) {
+                    f.label = prod.label;
+                    changed = true;
+                } else if (Array.isArray(prod.variants) && prod.variants.length && hasVal(prod.variants[0].label)) {
+                    f.label = prod.variants[0].label;
+                    changed = true;
+                }
+            }
+            if (f.variantId === undefined && Array.isArray(prod.variants) && prod.variants.length) {
+                var matched = prod.variants.find(function (v) { return v.img === f.img || v.label === f.label || v.id === f.id; });
+                f.variantId = matched ? matched.id : prod.id;
+                changed = true;
+            }
+        }
+    });
+    if (changed) {
+        saveFavorites();
+        renderFavorites();
+        window.updateHeartButtons();
+    }
+});
 
 // ===== Product Modal =====
 const productModal = document.getElementById("product-modal");
@@ -339,23 +505,43 @@ const closeModalBtn = document.getElementById("close-modal");
 const modalContent = document.getElementById("modal-content");
 
 function openModal(product) {
+    var infoHtml = '';
+    if (hasVal(product.benf)) {
+        infoHtml += '<p><i class="fa-solid fa-leaf" style="color:var(--sec-color);margin-left:6px;"></i>' + product.benf + '</p>';
+    }
+    if (hasVal(product.ingred)) {
+        infoHtml += '<p><i class="fa-solid fa-flask" style="color:var(--sec-color);margin-left:6px;"></i>' + product.ingred + '</p>';
+    }
+    if (hasVal(product.wieght)) {
+        infoHtml += '<p><i class="fa-solid fa-weight-hanging" style="color:var(--sec-color);margin-left:6px;"></i>' + product.wieght + '</p>';
+    }
+    var infoDiv = infoHtml ? '<div class="modal-info">' + infoHtml + '</div>' : '';
+
+    var priceHtml = hasVal(product.price) ? '<p class="modal-price">' + product.price + ' <span>ج.م</span></p>' : '';
+    var waUrl = "https://wa.me/201204308077?text=" + encodeURIComponent("أريد الطلب: " + product.name + (hasVal(product.price) ? " - " + product.price + " ج.م" : ""));
+
     modalContent.innerHTML = `
         <img src="${product.img}" alt="${product.name}">
         <h3>${product.name}</h3>
-        <div class="modal-info">
-            <p>${product.benf}</p>
-            <p>${product.ingred}</p>
-            <p>${product.wieght}</p>
-        </div>
-        <p class="modal-price">${product.price} ج.م</p>
+        ${infoDiv}
+        ${priceHtml}
         <div class="modal-actions">
-            <button class="modal-add-cart" onclick="addToCart(${JSON.stringify(product).replace(/"/g, '&quot;')}); closeProductModal();">
+            <button class="modal-add-cart" id="base-modal-add-cart" type="button">
                 <i class="fa-solid fa-cart-plus"></i> أضيفيه للسلة
             </button>
-            <a class="modal-wa-order" href="https://wa.me/201204308077?text=أريد%20الطلب:%20${encodeURIComponent(product.name)}%20-%20${product.price}%20ج.م" target="_blank">
+            <a class="modal-wa-order" href="${waUrl}" target="_blank" rel="noopener">
                 <i class="fa-brands fa-whatsapp"></i> اطلبيه الآن
             </a>
         </div>`;
+
+    var cartBtn = document.getElementById("base-modal-add-cart");
+    if (cartBtn) {
+        cartBtn.addEventListener("click", function () {
+            window.addToCart(product);
+            window.closeProductModal();
+        });
+    }
+
     productModal.classList.add("active");
     modalOverlay.classList.add("active");
     document.body.style.overflow = "hidden";
@@ -383,3 +569,38 @@ window.handleContactForm = function (e) {
 
 // ===== Init =====
 updateBadges();
+
+// ===== Lightweight Scroll Animations (IntersectionObserver) =====
+(function initScrollAnimations() {
+    if (!('IntersectionObserver' in window)) {
+        // Fallback for very old browsers
+        document.querySelectorAll('.reveal-on-scroll').forEach(function (el) {
+            el.classList.add('revealed');
+        });
+        return;
+    }
+
+    var observer = new IntersectionObserver(function (entries, obs) {
+        entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('revealed');
+                obs.unobserve(entry.target);
+            }
+        });
+    }, {
+        threshold: 0.12,
+        rootMargin: '0px 0px -40px 0px'
+    });
+
+    window.observeScrollElements = function () {
+        document.querySelectorAll('.reveal-on-scroll:not(.revealed)').forEach(function (el) {
+            observer.observe(el);
+        });
+    };
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', window.observeScrollElements);
+    } else {
+        window.observeScrollElements();
+    }
+})();

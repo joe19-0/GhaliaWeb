@@ -18,18 +18,21 @@
                 <a href="index.html" class="logo"><img src="images/logo.png" alt="شعار غالية"></a>
                 <div class="menu-overlay" id="menu-overlay"></div>
                 <ul class="links">
-                    <div class="upper">
-                        <h3>القائمة</h3>
-                        <i class="fa-solid fa-xmark close-btn"></i>
-                    </div>
+                    <li class="menu-upper-li" style="list-style:none;">
+                        <div class="upper">
+                            <h3>القائمة</h3>
+                            <i class="fa-solid fa-xmark close-btn"></i>
+                        </div>
+                    </li>
                     <li class="active"><a href="index.html">الرئيسية</a></li>
                     <li class="have-box">
                         <a href="products.html">تشكيلتنا</a>
                         <div class="box">
                             <i class="fa-solid fa-caret-up arrow-up"></i>
-                            <a href="products.html">الصابون الطبيعي</a>
-                            <a href="products.html">العناية بالبشرة</a>
-                            <a href="products.html">العروض والهدايا</a>
+                            <a href="products.html?cat=soaps">الصابون الطبيعي</a>
+                            <a href="products.html?cat=diffuser">الفواحات</a>
+                            <a href="products.html?cat=deodrant">مزيل العرق</a>
+                            <a href="products.html?cat=specBox">بوكس الهدايا</a>
                         </div>
                     </li>
                     <li><a href="#about">من نحن</a></li>
@@ -54,7 +57,7 @@
         <div class="container">
 
             <!-- Landing Page Section -->
-            <section class="lan-pg">
+            <section class="lan-pg reveal-on-scroll">
                 <div class="right">
                     <h1>غالية</h1>
                     <p>اكتشفي تشكيلة غالية للصابون الطبيعي. منتجات عناية بالبشرة مصنوعة يدوياً من أفضل المكونات الطبيعية والزيوت العطرية لمنح بشرتكِ النعومة والترطيب الذي تستحقه.</p>
@@ -95,7 +98,7 @@
             </section>
 
             <!-- Recommended Products Section -->
-            <section class="rec-products" id="rec-products">
+            <section class="rec-products reveal-on-scroll" id="rec-products">
                 <div class="upper">
                     <div class="title">
                         <i class="fa-solid fa-wand-magic-sparkles"></i>
@@ -116,8 +119,64 @@
                 </div>
             </section>
 
+            <!-- Special Gift Box Section -->
+            <section class="special-box-section reveal-on-scroll" id="special-box">
+                <div class="special-box-container">
+                    <div class="special-box-content">
+                        <span class="special-box-badge"><i class="fa-solid fa-gift"></i> هدية استثنائية لمن تحبين</span>
+                        <h2>بوكس الهدايا المميز من غالية</h2>
+                        <p class="special-box-desc">
+                            اصنعي بوكس هدايا فاخر مخصص بالكامل حسب ذوقكِ واختياركِ! نسّقي بين تشكيلات الصابون الطبيعي، فواحات الدولاب العطرية، والكريمات الطبيعية لتكون أجمل هدية تسعد القلوب في كافة المناسبات.
+                        </p>
+                        <div class="special-box-features">
+                            <div class="sbf-item">
+                                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                                <div>
+                                    <strong>تفصيل مخصص بالكامل</strong>
+                                    <span>اختاري قطع الصابون وروائح الفواحات المفضلة</span>
+                                </div>
+                            </div>
+                            <div class="sbf-item">
+                                <i class="fa-solid fa-box-open"></i>
+                                <div>
+                                    <strong>تغليف هدايا راقي</strong>
+                                    <span>بوكس أنيق بتغليف شيك جداً وجاهز للإهداء المباشر</span>
+                                </div>
+                            </div>
+                            <div class="sbf-item">
+                                <i class="fa-solid fa-tags"></i>
+                                <div>
+                                    <strong>سعر مرن ومناسب</strong>
+                                    <span>يبدأ من 300 ج.م حسب عدد القطع والمحتويات المختارة</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="special-box-actions">
+                            <a href="https://wa.me/201204308077?text=مرحباً،%20أريد%20طلب%20وتنسيق%20بوكس%20الهدايا%20المميز%20من%20غالية%20🎁" target="_blank" rel="noopener" class="special-box-btn">
+                                <i class="fa-brands fa-whatsapp"></i>
+                                نسقي بوكسكِ الآن عبر واتساب
+                            </a>
+                            <a href="products.html?prod=30" class="special-box-secondary-btn">
+                                <i class="fa-solid fa-store"></i>
+                                عرض تفاصيل البوكس بالمتجر
+                            </a>
+                        </div>
+                    </div>
+                    <div class="special-box-media">
+                        <div class="special-box-img-wrapper">
+                            <img src="images/specialBox1.jpg" alt="بوكس الهدايا المميز من غالية" loading="lazy">
+                            <span class="special-box-tag"><i class="fa-solid fa-crown"></i> الأكثر طلباً للمناسبات</span>
+                            <div class="special-box-price-pill">
+                                <span>يبدأ من</span>
+                                <strong>300 ج.م</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             <!-- About Us Section -->
-            <section class="about-section" id="about">
+            <section class="about-section reveal-on-scroll" id="about">
                 <div class="about-header">
                     <div class="title">
                         <i class="fa-solid fa-heart"></i>
@@ -167,7 +226,7 @@
             </section>
 
             <!-- Reviews Section -->
-            <section class="reviews-section" id="reviews">
+            <section class="reviews-section reveal-on-scroll" id="reviews">
                 <div class="reviews-header">
                     <div class="title">
                         <i class="fa-solid fa-star"></i>
@@ -192,7 +251,7 @@
             </section>
 
             <!-- Contact Section -->
-            <section class="contact-section" id="contact">
+            <section class="contact-section reveal-on-scroll" id="contact">
                 <div class="contact-header">
                     <div class="title">
                         <i class="fa-solid fa-envelope"></i>
@@ -202,21 +261,21 @@
                 </div>
                 <div class="contact-content">
                     <div class="contact-info">
-                        <a href="https://wa.me/201204308077?text=مرحباً،%20أريد%20الاستفسار%20عن%20منتجات%20غالية" target="_blank" class="contact-item">
+                        <a href="https://wa.me/201204308077?text=مرحباً،%20أريد%20الاستفسار%20عن%20منتجات%20غالية" target="_blank" rel="noopener" class="contact-item">
                             <i class="fa-brands fa-whatsapp"></i>
                             <div>
                                 <strong>واتساب</strong>
                                 <p>تواصلي عبر واتساب</p>
                             </div>
                         </a>
-                        <a href="https://www.instagram.com/ghaliaa__10?srtk=MTkyaGl3bXAxZm5xeg%3D%3D" target="_blank" class="contact-item">
+                        <a href="https://www.instagram.com/ghaliaa__10?srtk=MTkyaGl3bXAxZm5xeg%3D%3D" target="_blank" rel="noopener" class="contact-item">
                             <i class="fa-brands fa-instagram"></i>
                             <div>
                                 <strong>إنستغرام</strong>
                                 <p>@ghaliaa__10</p>
                             </div>
                         </a>
-                        <a href="https://www.facebook.com/share/19c9CjjEmw/?mibextid=wwXIfr" target="_blank" class="contact-item">
+                        <a href="https://www.facebook.com/share/19c9CjjEmw/?mibextid=wwXIfr" target="_blank" rel="noopener" class="contact-item">
                             <i class="fa-brands fa-facebook"></i>
                             <div>
                                 <strong>فيسبوك</strong>
@@ -346,9 +405,9 @@
                     <a href="index.html"><img src="images/logo.png" alt="شعار غالية"></a>
                     <p>متجر غالية للصابون الطبيعي — نصنع لكِ لحظات دلال يومية بمكونات طبيعية فاخرة.</p>
                     <div class="footer-social">
-                        <a href="https://www.instagram.com/ghaliaa__10?srtk=MTkyaGl3bXAxZm5xeg%3D%3D" target="_blank" aria-label="إنستغرام"><i class="fa-brands fa-instagram"></i></a>
-                        <a href="https://www.facebook.com/share/19c9CjjEmw/?mibextid=wwXIfr" target="_blank" aria-label="فيسبوك"><i class="fa-brands fa-facebook"></i></a>
-                        <a href="https://wa.me/201204308077" target="_blank" aria-label="واتساب"><i class="fa-brands fa-whatsapp"></i></a>
+                        <a href="https://www.instagram.com/ghaliaa__10?srtk=MTkyaGl3bXAxZm5xeg%3D%3D" target="_blank" rel="noopener" aria-label="إنستغرام"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="https://www.facebook.com/share/19c9CjjEmw/?mibextid=wwXIfr" target="_blank" rel="noopener" aria-label="فيسبوك"><i class="fa-brands fa-facebook"></i></a>
+                        <a href="https://wa.me/201204308077" target="_blank" rel="noopener" aria-label="واتساب"><i class="fa-brands fa-whatsapp"></i></a>
                     </div>
                 </div>
                 <div class="footer-links">
@@ -356,18 +415,10 @@
                     <ul>
                         <li><a href="index.html">الرئيسية</a></li>
                         <li><a href="products.html">تشكيلتنا</a></li>
+                        <li><a href="#special-box">بوكس الهدايا</a></li>
                         <li><a href="#about">من نحن</a></li>
                         <li><a href="reviews.html">التقييمات</a></li>
                         <li><a href="#contact">تواصلي معنا</a></li>
-                    </ul>
-                </div>
-                <div class="footer-links">
-                    <h4>معلومات</h4>
-                    <ul>
-                        <li><a href="#">سياسة الإرجاع</a></li>
-                        <li><a href="#">الشحن والتوصيل</a></li>
-                        <li><a href="#">الأسئلة الشائعة</a></li>
-                        <li><a href="#">سياسة الخصوصية</a></li>
                     </ul>
                 </div>
                 <div class="footer-contact">

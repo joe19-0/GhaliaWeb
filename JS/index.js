@@ -1,3 +1,51 @@
+// ===== Helper: Check if key & value are not null/empty =====
+function hasVal(val) {
+    return val !== null && val !== undefined && String(val).trim() !== '' && String(val).trim() !== 'undefined' && String(val).trim() !== 'null';
+}
+
+function getAllVariants(product) {
+    if (!product || !Array.isArray(product.variants) || !product.variants.length) return [];
+    var list = [];
+    if (hasVal(product.label)) {
+        list.push({
+            id: product.id,
+            img: product.img,
+            wieght: product.wieght,
+            price: product.price,
+            label: product.label
+        });
+    }
+    product.variants.forEach(function (v) {
+        if (!v) return;
+        var exists = list.some(function (item) {
+            return item.id === v.id || (hasVal(item.label) && item.label === v.label);
+        });
+        if (!exists) {
+            list.push(v);
+        }
+    });
+    return list;
+}
+
+// ===== Helper: Get Descriptive Variant Selector Label =====
+function getVariantSelectorLabel(variants) {
+    if (!variants || !variants.length) return '<i class="fa-solid fa-palette"></i> الخيار:';
+    var labels = variants.map(function(v) { return hasVal(v.label) ? v.label : ''; }).join(' ');
+    if (/عطر|رائحة|فانيليا|ورد|ليمون|فراولة/.test(labels) && /حجم|كبير|صغير/.test(labels)) {
+        return '<i class="fa-solid fa-ruler-combined"></i> الحجم والعطر:';
+    }
+    if (/عطر|رائحة/.test(labels)) {
+        return '<i class="fa-solid fa-bottle-droplet"></i> العطر:';
+    }
+    if (/شكل بحري|شكل حيوانات|شكل فواكه|شكل حروف|بحري|حيوانات|فواكه|حروف/.test(labels)) {
+        return '<i class="fa-solid fa-shapes"></i> الشكل:';
+    }
+    if (/حجم|كبير|صغير/.test(labels)) {
+        return '<i class="fa-solid fa-ruler-combined"></i> الحجم:';
+    }
+    return '<i class="fa-solid fa-palette"></i> الخيار:';
+}
+
 // ===== Render Recommended Products =====
 // Wait for productsReady promise from main.js (handles both cache & fresh fetch)
 window.productsReady.then(function (products) {
@@ -14,22 +62,50 @@ window.productsReady.then(function (products) {
         return;
     }
 
+    // Filter valid products (exclude specBox from homepage featured)
+    const validProducts = products.filter(function (p) {
+        return p && p.id !== undefined && hasVal(p.name) && hasVal(p.img) && p.category !== 'specBox';
+    });
+
     // Show first 6 products
-    let visibleCount = Math.min(6, products.length);
+    let visibleCount = Math.min(6, validProducts.length);
     let showAll = false;
 
     function renderProducts(count) {
-        // Filter out products that have no valid image (soup11 doesn't exist)
-        const validProducts = products.filter(function (p) {
-            return p.img && !p.img.includes("soup11");
-        });
-
         const toShow = showAll ? validProducts : validProducts.slice(0, count);
 
         productsContainer.innerHTML = toShow.map(function (product) {
-            const isFav = window.favorites.some(function (f) { return f.id === product.id; });
+            const variants = getAllVariants(product);
+            const initialVarId = variants.length ? variants[0].id : null;
+            const isFav = typeof window.isFavorite === "function" ?
+                window.isFavorite(product.id, initialVarId) :
+                window.favorites.some(function (f) { return f.id === product.id; });
+
+            let variantsHtml = '';
+            if (variants.length > 0) {
+                const selectorLabel = getVariantSelectorLabel(variants);
+                const chips = variants.map(function (v, idx) {
+                    return `<button class="variant-chip ${idx === 0 ? 'active' : ''}" data-variant-id="${v.id}" type="button">${v.label}</button>`;
+                }).join('');
+                variantsHtml = `
+                    <div class="variant-selector">
+                        <span class="variant-label">${selectorLabel}</span>
+                        <div class="variant-chips">${chips}</div>
+                    </div>`;
+            }
+
+            const initialImg    = variants.length && hasVal(variants[0].img) ? variants[0].img : product.img;
+            const initialWeight = variants.length && hasVal(variants[0].wieght) ? variants[0].wieght : product.wieght;
+            const initialPrice  = variants.length && hasVal(variants[0].price) ? variants[0].price : product.price;
+
+            const nameHtml   = hasVal(product.name) ? `<p class="name">${product.name}</p>` : '';
+            const benfHtml   = hasVal(product.benf) ? `<p class="benf">${product.benf}</p>` : '';
+            const ingredHtml = hasVal(product.ingred) ? `<p class="ingred">${product.ingred}</p>` : '';
+            const weightHtml = hasVal(initialWeight) ? `<p class="product-weight"><i class="fa-solid fa-weight-hanging"></i> ${initialWeight}</p>` : '';
+            const priceHtml  = hasVal(initialPrice) ? `<div class="prices"><p class="price">${initialPrice} <span>ج.م</span></p></div>` : '';
+
             return `
-                <div class="product" data-id="${product.id}" role="article">
+                <div class="product" id="product-${product.id}" data-id="${product.id}" ${variants.length ? `data-selected-variant-id="${variants[0].id}"` : ''} role="article">
                     <div class="img">
                         <div class="fav-product ${isFav ? "active" : ""}" 
                             data-id="${product.id}"
@@ -37,19 +113,19 @@ window.productsReady.then(function (products) {
                             title="أضيفيه للمفضلة">
                             <i class="${isFav ? "fa-solid" : "fa-regular"} fa-heart"></i>
                         </div>
-                        <img src="${product.img}" alt="${product.name}" loading="lazy">
+                        <img src="${initialImg}" alt="${product.name}" loading="lazy">
                         <div class="msg">
                             <i class="fa-solid fa-circle-info"></i>
                             <p>اضغطي للتفاصيل</p>
                         </div>
                     </div>
                     <div class="content">
-                        <p class="name">${product.name}</p>
-                        <p class="benf">${product.benf}</p>
-                        <p class="ingred">${product.ingred}</p>
-                        <div class="prices">
-                            <p class="price">${product.price} <span>ج.م</span></p>
-                        </div>
+                        ${nameHtml}
+                        ${benfHtml}
+                        ${ingredHtml}
+                        ${weightHtml}
+                        ${variantsHtml}
+                        ${priceHtml}
                     </div>
                     <div class="stars">
                         <i class="fa-solid fa-star"></i>
@@ -66,15 +142,23 @@ window.productsReady.then(function (products) {
                 </div>`;
         }).join("");
 
-        // Update count text
-        const total = products.filter(function (p) { return !p.img.includes("soup11"); }).length;
-        productsCount.textContent = `يتم عرض ${toShow.length} من أصل ${total}+ منتجاً`;
+        // Update count text & progress bar percentage
+        const total = validProducts.length;
+        if (productsCount) productsCount.textContent = `يتم عرض ${toShow.length} من أصل ${total}+ منتجاً`;
+
+        const productsLine = document.querySelector(".rec-products .lower .line");
+        if (productsLine && total > 0) {
+            const pct = Math.min(100, Math.round((toShow.length / total) * 100));
+            productsLine.style.setProperty("--progress-pct", pct + "%");
+        }
 
         // Update see-more button
-        if (showAll || toShow.length >= total) {
-            seeMoreBtn.style.display = "none";
-        } else {
-            seeMoreBtn.style.display = "inline-block";
+        if (seeMoreBtn) {
+            if (showAll || toShow.length >= total) {
+                seeMoreBtn.style.display = "none";
+            } else {
+                seeMoreBtn.style.display = "inline-block";
+            }
         }
 
         // Attach event listeners after rendering
@@ -82,13 +166,78 @@ window.productsReady.then(function (products) {
     }
 
     function attachProductEvents() {
+        // Variant chip click
+        productsContainer.querySelectorAll(".product").forEach(function (card) {
+            const id = parseInt(card.dataset.id);
+            const product = validProducts.find(function (p) { return p.id === id; });
+            if (!product) return;
+            const variants = getAllVariants(product);
+            if (!variants.length) return;
+
+            const chips = card.querySelectorAll(".variant-chip");
+            chips.forEach(function (chip) {
+                chip.addEventListener("click", function (e) {
+                    e.stopPropagation();
+                    chips.forEach(function (c) { c.classList.remove("active"); });
+                    chip.classList.add("active");
+
+                    const vid = chip.dataset.variantId;
+                    card.dataset.selectedVariantId = vid;
+                    const variant = variants.find(function (v) { return String(v.id) === String(vid); });
+                    if (variant) {
+                        const imgEl = card.querySelector(".img img");
+                        if (imgEl && hasVal(variant.img)) {
+                            imgEl.classList.remove('img-variant-switch');
+                            void imgEl.offsetWidth;
+                            imgEl.src = variant.img;
+                            imgEl.classList.add('img-variant-switch');
+                        }
+
+                        const weightEl = card.querySelector(".product-weight");
+                        if (weightEl) {
+                            const w = hasVal(variant.wieght) ? variant.wieght : product.wieght;
+                            if (hasVal(w)) {
+                                weightEl.innerHTML = `<i class="fa-solid fa-weight-hanging"></i> ${w}`;
+                                weightEl.style.display = "";
+                            }
+                        }
+
+                        const priceEl = card.querySelector(".price");
+                        if (priceEl && hasVal(variant.price)) {
+                            priceEl.innerHTML = `${variant.price} <span>ج.م</span>`;
+                            priceEl.classList.remove('price-updated');
+                            void priceEl.offsetWidth;
+                            priceEl.classList.add('price-updated');
+                        }
+
+                        // Update Heart Button for this variant
+                        const favBtn = card.querySelector(".fav-product");
+                        if (favBtn && typeof window.isFavorite === "function") {
+                            const isVFav = window.isFavorite(product.id, variant.id);
+                            favBtn.classList.toggle("active", isVFav);
+                            const hIcon = favBtn.querySelector("i");
+                            if (hIcon) {
+                                if (isVFav) {
+                                    hIcon.classList.remove("fa-regular");
+                                    hIcon.classList.add("fa-solid");
+                                } else {
+                                    hIcon.classList.remove("fa-solid");
+                                    hIcon.classList.add("fa-regular");
+                                }
+                            }
+                        }
+                    }
+                });
+            });
+        });
+
         // Product card click → open modal
         productsContainer.querySelectorAll(".product").forEach(function (card) {
             card.addEventListener("click", function (e) {
-                // Don't open modal if clicking fav or add-to-cart
-                if (e.target.closest(".fav-product") || e.target.closest(".add-cart-btn")) return;
+                // Don't open modal if clicking fav or add-to-cart or variant chip
+                if (e.target.closest(".fav-product") || e.target.closest(".add-cart-btn") || e.target.closest(".variant-chip")) return;
                 const id = parseInt(card.dataset.id);
-                const product = products.find(function (p) { return p.id === id; });
+                const product = validProducts.find(function (p) { return p.id === id; });
                 if (product) openProductModal(product);
             });
         });
@@ -98,9 +247,21 @@ window.productsReady.then(function (products) {
             btn.addEventListener("click", function (e) {
                 e.preventDefault();
                 e.stopPropagation();
-                const id = parseInt(btn.dataset.id);
-                const product = products.find(function (p) { return p.id === id; });
-                if (product) toggleFavorite(product, btn);
+                const card = btn.closest(".product");
+                const id = parseInt(card ? card.dataset.id : btn.dataset.id);
+                const product = validProducts.find(function (p) { return p.id === id; });
+                if (!product) return;
+
+                const variants = getAllVariants(product);
+                let selVariant = null;
+                if (variants.length) {
+                    const selId = card ? card.dataset.selectedVariantId : null;
+                    selVariant = variants.find(function (v) { return String(v.id) === String(selId); }) || variants[0];
+                }
+
+                if (typeof window.toggleFavorite === "function") {
+                    window.toggleFavorite(product, btn, selVariant);
+                }
             });
         });
 
@@ -111,9 +272,24 @@ window.productsReady.then(function (products) {
                 e.stopPropagation();
                 const card = btn.closest(".product");
                 const id = parseInt(card.dataset.id);
-                const product = products.find(function (p) { return p.id === id; });
+                const product = validProducts.find(function (p) { return p.id === id; });
                 if (product) {
-                    addToCart(product);
+                    let productToAdd = Object.assign({}, product);
+                    const variants = getAllVariants(product);
+                    if (variants.length) {
+                        const selId = card.dataset.selectedVariantId;
+                        const selVariant = variants.find(function (v) { return String(v.id) === String(selId); }) || variants[0];
+                        if (selVariant) {
+                            productToAdd = Object.assign({}, product, {
+                                id: selVariant.id,
+                                name: product.name + (hasVal(selVariant.label) ? ' — ' + selVariant.label : ''),
+                                img: selVariant.img || product.img,
+                                price: hasVal(selVariant.price) ? selVariant.price : product.price,
+                                wieght: hasVal(selVariant.wieght) ? selVariant.wieght : product.wieght
+                            });
+                        }
+                    }
+                    window.addToCart(productToAdd);
                     // Animate button
                     btn.innerHTML = '<i class="fa-solid fa-check"></i> تمت الإضافة';
                     btn.style.backgroundColor = "#4caf50";
@@ -211,9 +387,15 @@ window.productsReady.then(function (products) {
                     </div>`;
             }).join("");
 
-            // Update reviews count text
+            // Update reviews count text & progress bar percentage
             if (reviewsCount) {
                 reviewsCount.textContent = `يتم عرض ${initialReviews.length} من أصل ${reviews.length}+ تقييماً`;
+            }
+
+            const reviewsLine = document.querySelector(".reviews-section .lower .line");
+            if (reviewsLine && reviews.length > 0) {
+                const pct = Math.min(100, Math.round((initialReviews.length / reviews.length) * 100));
+                reviewsLine.style.setProperty("--progress-pct", pct + "%");
             }
         })
         .catch(function (error) {
