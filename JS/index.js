@@ -411,6 +411,17 @@ window.productsReady.then(function (products) {
         });
 })();
 
+// Add Special Gift Box to Cart from Home Page
+window.addSpecialBoxToCart = function () {
+    window.addToCart({
+        id: 33,
+        name: "بوكس الهدايا المميز",
+        img: "images/specialBox1.jpg",
+        price: "حسب الاختيار والتنسيق",
+        category: "specBox"
+    });
+};
+
 // Get The Year
 let yearSpan = document.querySelector(".year");
 if (yearSpan) {

@@ -349,14 +349,13 @@ function applyFilters() {
             if (pPrice < minPrice) return false;
             if (maxPrice !== Infinity && pPrice > maxPrice) return false;
         } else if (p.category === 'specBox') {
-            // specBox starts at 300
-            if (minPrice > 300) return false;
+            if (minPrice > 0 || (maxPrice !== Infinity && maxPrice < 500)) return false;
         }
         return true;
     });
 
-    if (activeSort === 'asc')  filtered.sort(function (a, b) { return (Number(a.price) || 300) - (Number(b.price) || 300); });
-    if (activeSort === 'desc') filtered.sort(function (a, b) { return (Number(b.price) || 300) - (Number(a.price) || 300); });
+    if (activeSort === 'asc')  filtered.sort(function (a, b) { return (Number(a.price) || 9999) - (Number(b.price) || 9999); });
+    if (activeSort === 'desc') filtered.sort(function (a, b) { return (Number(b.price) || -1) - (Number(a.price) || -1); });
 
     renderProducts(filtered);
 }
@@ -426,17 +425,22 @@ function renderProducts(products) {
             priceHtml = '<div class="prices"><p class="price">' + initialPrice + ' <span>ج.م</span></p></div>';
         } else if (isSpecBox) {
             priceHtml = '<div class="prices specbox-card-prices">' +
-                '<p class="price specbox-start-price">يبدأ من 300 <span>ج.م</span></p>' +
-                '<p class="specbox-note-sub"><i class="fa-solid fa-gift"></i> حسب اختيارك وتنسيقك</p>' +
+                '<p class="price specbox-start-price" style="font-size:16px !important;">السعر حسب الاختيار والتنسيق</p>' +
+                '<p class="specbox-note-sub"><i class="fa-solid fa-gift"></i> تفصيل مخصص حسب ذوقك</p>' +
             '</div>';
         } else if (hasVal(initialPrice)) {
             priceHtml = '<div class="prices"><p class="price" style="font-size:13px;color:var(--text-sec);">' + escHtml(initialPrice) + '</p></div>';
         }
 
         var cardBtnHtml = isSpecBox ?
-            '<a href="https://wa.me/201204308077?text=' + encodeURIComponent('مرحباً، أريد طلب وتنسيق بوكس الهدايا المميز من متجر غالية 🎁') + '" target="_blank" rel="noopener" class="add-cart-btn specbox-card-btn" aria-label="نسقي بوكسك عبر واتساب">' +
-                '<i class="fa-brands fa-whatsapp"></i> نسّقي واطلبي بوكسكِ' +
-            '</a>' :
+            '<div class="specbox-card-dual-btns">' +
+                '<button class="add-cart-btn" type="button" aria-label="أضيفيه للسلة">' +
+                    '<i class="fa-solid fa-cart-plus"></i> أضيفيه للسلة' +
+                '</button>' +
+                '<a href="https://wa.me/201204308077?text=' + encodeURIComponent('مرحباً، أريد طلب وتنسيق بوكس الهدايا المميز من متجر غالية 🎁') + '" target="_blank" rel="noopener" class="specbox-quick-wa" aria-label="نسقي بوكسك عبر واتساب" title="نسّقي بوكسكِ عبر واتساب">' +
+                    '<i class="fa-brands fa-whatsapp"></i>' +
+                '</a>' +
+            '</div>' :
             '<button class="add-cart-btn" type="button" aria-label="أضيفيه للسلة">' +
                 '<i class="fa-solid fa-cart-plus"></i> أضيفيه للسلة' +
             '</button>';
@@ -562,6 +566,7 @@ function attachProductEvents(products) {
         card.addEventListener('click', function (e) {
             if (e.target.closest('.fav-product') ||
                 e.target.closest('.add-cart-btn') ||
+                e.target.closest('.specbox-quick-wa') ||
                 e.target.closest('.specbox-card-btn') ||
                 e.target.closest('.variant-chip')) return;
             var id = parseInt(card.dataset.id);
@@ -593,8 +598,8 @@ function attachProductEvents(products) {
         });
     });
 
-    // Add to cart (only for actual button elements, not the <a> link for specBox)
-    container.querySelectorAll('button.add-cart-btn').forEach(function (btn) {
+    // Add to cart
+    container.querySelectorAll('.add-cart-btn').forEach(function (btn) {
         btn.addEventListener('click', function (e) {
             e.preventDefault();
             e.stopPropagation();
@@ -604,6 +609,9 @@ function attachProductEvents(products) {
             if (!product) return;
 
             var productToAdd = Object.assign({}, product);
+            if (product.category === 'specBox' || product.id === 33) {
+                productToAdd.price = "السعر حسب الاختيار والتنسيق";
+            }
             var variants = getAllVariants(product);
             if (variants.length) {
                 var selId = card.dataset.selectedVariantId;
@@ -613,7 +621,7 @@ function attachProductEvents(products) {
                         id: selVariant.id,
                         name: product.name + (hasVal(selVariant.label) ? ' — ' + selVariant.label : ''),
                         img: selVariant.img || product.img,
-                        price: hasVal(selVariant.price) ? selVariant.price : product.price,
+                        price: hasVal(selVariant.price) ? selVariant.price : (product.category === 'specBox' ? "السعر حسب الاختيار والتنسيق" : product.price),
                         wieght: hasVal(selVariant.wieght) ? selVariant.wieght : product.wieght
                     });
                 }
@@ -697,7 +705,7 @@ function openProductModalEnhanced(product, cardEl) {
     var priceDisplay = hasVal(currentPrice) && !isNaN(Number(currentPrice))
         ? '<p class="modal-price" id="modal-product-price">' + currentPrice + ' <span>ج.م</span></p>'
         : (isModalSpecBox
-            ? '<div class="modal-specbox-pricing"><p class="modal-price" id="modal-product-price">يبدأ من 300 <span>ج.م</span></p><p class="modal-price-note"><i class="fa-solid fa-wand-magic-sparkles"></i> السعر النهائي حسب عدد ونوع قطع الصابون والفواحات المختارة</p></div>'
+            ? '<div class="modal-specbox-pricing"><p class="modal-price" id="modal-product-price" style="font-size:18px !important;">السعر حسب الاختيار والتنسيق</p><p class="modal-price-note"><i class="fa-solid fa-wand-magic-sparkles"></i> تفصيل مخصص بالكامل حسب القطع والروائح التي تختارينها</p></div>'
             : '');
 
     var waItemName = product.name + (activeVariant && hasVal(activeVariant.label) ? ' — ' + activeVariant.label : '');
@@ -707,8 +715,11 @@ function openProductModalEnhanced(product, cardEl) {
 
     var modalActionsHtml = isModalSpecBox
         ? '<div class="modal-actions">' +
-            '<a class="modal-wa-order specbox-wa-fullbtn" id="modal-wa-link" href="' + waUrl + '" target="_blank" rel="noopener">' +
-                '<i class="fa-brands fa-whatsapp"></i> نسّقي واطلبي بوكسكِ الآن' +
+            '<button class="modal-add-cart" id="modal-add-cart-btn" type="button">' +
+                '<i class="fa-solid fa-cart-plus"></i> أضيفيه للسلة' +
+            '</button>' +
+            '<a class="modal-wa-order specbox-wa-btn" id="modal-wa-link" href="' + waUrl + '" target="_blank" rel="noopener">' +
+                '<i class="fa-brands fa-whatsapp"></i> نسّقي بالواتساب' +
             '</a>' +
           '</div>'
         : '<div class="modal-actions">' +
@@ -818,12 +829,15 @@ function openProductModalEnhanced(product, cardEl) {
     if (cartBtn) {
         cartBtn.addEventListener('click', function () {
             var productToAdd = Object.assign({}, product);
+            if (product.category === 'specBox' || product.id === 33) {
+                productToAdd.price = "السعر حسب الاختيار والتنسيق";
+            }
             if (activeVariant) {
                 productToAdd = Object.assign({}, product, {
                     id: activeVariant.id,
                     name: product.name + (hasVal(activeVariant.label) ? ' — ' + activeVariant.label : ''),
                     img: activeVariant.img || product.img,
-                    price: hasVal(activeVariant.price) ? activeVariant.price : product.price,
+                    price: hasVal(activeVariant.price) ? activeVariant.price : (product.category === 'specBox' ? "السعر حسب الاختيار والتنسيق" : product.price),
                     wieght: hasVal(activeVariant.wieght) ? activeVariant.wieght : product.wieght
                 });
             }

@@ -43,7 +43,7 @@
                 }
 
                 if (reviewsTotalCount) {
-                    reviewsTotalCount.textContent = `+${reviews.length}`;
+                    reviewsTotalCount.textContent = "+500";
                 }
 
                 allReviewsContainer.innerHTML = reviews.map(function (rev) {

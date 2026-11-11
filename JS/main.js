@@ -61,6 +61,21 @@ window.productsReady = new Promise(function (resolve) {
 window.cart = JSON.parse(localStorage.getItem("ghalia_cart")) || [];
 window.favorites = JSON.parse(localStorage.getItem("ghalia_favorites")) || [];
 
+// Sanitize legacy items in cart if any had non-numeric price or old test price
+if (Array.isArray(window.cart)) {
+    let cartCleaned = false;
+    window.cart.forEach(function (item) {
+        if (item && ((item.id === 33) || (item.category === 'specBox') || String(item.name || '').includes('بوكس'))) {
+            item.price = "السعر حسب الاختيار والتنسيق";
+            item.category = 'specBox';
+            cartCleaned = true;
+        }
+    });
+    if (cartCleaned) {
+        localStorage.setItem("ghalia_cart", JSON.stringify(window.cart));
+    }
+}
+
 function saveCart() {
     localStorage.setItem("ghalia_cart", JSON.stringify(window.cart));
 }
@@ -141,7 +156,7 @@ function isSpecBoxItem(item) {
 
 function formatCartPrice(item) {
     if (isSpecBoxItem(item)) {
-        return 'يبدأ من 300 ج.م <span class="cart-price-note">(حسب التنسيق)</span>';
+        return '<span class="cart-custom-price">السعر حسب الاختيار والتنسيق</span>';
     }
     const num = parseFloat(item.price);
     if (!isNaN(num) && isFinite(num) && String(item.price).trim() !== '') {
@@ -150,12 +165,12 @@ function formatCartPrice(item) {
     const str = String(item.price || '').trim();
     if (str.includes('ج.م')) return escHtml(str);
     if (str) return escHtml(str);
-    return 'يُحدد لاحقاً';
+    return 'السعر حسب الاختيار والتنسيق';
 }
 
 function formatFavPrice(item) {
     if (isSpecBoxItem(item)) {
-        return '<span class="fav-spec-price">يبدأ من 300 <span>ج.م</span></span> <span class="fav-spec-sub">(حسب التنسيق)</span>';
+        return '<span class="fav-spec-price">السعر حسب الاختيار والتنسيق</span>';
     }
     const num = parseFloat(item.price);
     if (!isNaN(num) && isFinite(num) && String(item.price).trim() !== '') {
@@ -164,7 +179,7 @@ function formatFavPrice(item) {
     const str = String(item.price || '').trim();
     if (str.includes('ج.م')) return escHtml(str);
     if (str) return escHtml(str);
-    return 'يُحدد لاحقاً';
+    return 'السعر حسب الاختيار والتنسيق';
 }
 
 function renderCart() {
@@ -173,7 +188,7 @@ function renderCart() {
             <div class="cart-empty">
                 <i class="fa-solid fa-box-open"></i>
                 <p>سلتكِ فارغة حتى الآن.</p>
-                <a href="#rec-products" class="shop-btn" onclick="closeCart()">تصفحي المنتجات</a>
+                <a href="products.html" class="shop-btn" onclick="closeCart()">تصفحي المنتجات</a>
             </div>`;
         cartFooter.style.display = "none";
         return;
@@ -181,20 +196,17 @@ function renderCart() {
 
     let numericTotal = 0;
     let hasCustomItem = false;
-    let customBoxCount = 0;
 
     cartItemsDiv.innerHTML = window.cart.map(function (item, idx) {
         const qty = Math.max(1, parseInt(item.qty, 10) || 1);
+        const isBox = isSpecBoxItem(item);
         const num = parseFloat(item.price);
-        const isNum = !isNaN(num) && isFinite(num) && String(item.price).trim() !== '';
+        const isNum = !isNaN(num) && isFinite(num) && !isBox;
 
         if (isNum) {
             numericTotal += num * qty;
         } else {
             hasCustomItem = true;
-            if (isSpecBoxItem(item)) {
-                customBoxCount += qty;
-            }
         }
 
         return `
@@ -219,9 +231,9 @@ function renderCart() {
     if (!hasCustomItem) {
         displayTotal = numericTotal + " ج.م";
     } else if (numericTotal === 0) {
-        displayTotal = "يبدأ من " + (300 * (customBoxCount || 1)) + " ج.م (حسب التنسيق)";
+        displayTotal = "يُحدد حسب التنسيق عبر واتساب";
     } else {
-        displayTotal = numericTotal + " ج.م + بوكس (يبدأ من " + (300 * (customBoxCount || 1)) + " ج.م)";
+        displayTotal = numericTotal + " ج.م + سعر البوكس حسب التنسيق";
     }
 
     cartTotalPrice.textContent = displayTotal;
@@ -242,12 +254,12 @@ function buildOrderMessage(customer) {
     msg += "📦 *تفاصيل المنتجات:*\n";
     let numericTotal = 0;
     let hasCustomItem = false;
-    let customBoxCount = 0;
 
     window.cart.forEach(function (item, i) {
         const qty = Math.max(1, parseInt(item.qty, 10) || 1);
+        const isBox = isSpecBoxItem(item);
         const num = parseFloat(item.price);
-        const isNum = !isNaN(num) && isFinite(num) && String(item.price).trim() !== '';
+        const isNum = !isNaN(num) && isFinite(num) && !isBox;
 
         msg += `\n${i + 1}. *${item.name}*\n`;
         msg += `   الكمية: ${qty} قطعة\n`;
@@ -258,12 +270,7 @@ function buildOrderMessage(customer) {
             msg += `   السعر: ${num} ج.م × ${qty} = ${lineTotal} ج.م\n`;
         } else {
             hasCustomItem = true;
-            if (isSpecBoxItem(item)) {
-                customBoxCount += qty;
-                msg += `   السعر: يبدأ من 300 ج.م (تنسيق مخصص حسب الاختيار)\n`;
-            } else {
-                msg += `   السعر: ${item.price || 'حسب التنسيق'}\n`;
-            }
+            msg += `   السعر: يُحدد بالتنسيق حسب المحتويات المختارة\n`;
         }
     });
 
@@ -271,9 +278,9 @@ function buildOrderMessage(customer) {
     if (!hasCustomItem) {
         msg += `💰 *الإجمالي النهائي: ${numericTotal} ج.م*\n`;
     } else if (numericTotal === 0) {
-        msg += `💰 *الإجمالي: يبدأ من ${300 * (customBoxCount || 1)} ج.م (يُحدد بدقة حسب محتويات البوكس)*\n`;
+        msg += `💰 *الإجمالي: يُحدد عبر واتساب حسب المنتجات المختارة للبوكس*\n`;
     } else {
-        msg += `💰 *الإجمالي: ${numericTotal} ج.م + سعر البوكس (يبدأ من ${300 * (customBoxCount || 1)} ج.م حسب التنسيق)*\n`;
+        msg += `💰 *الإجمالي: ${numericTotal} ج.م + سعر البوكس (يُحدد بالتنسيق)*\n`;
     }
     msg += "─────────────────────\n";
     msg += "أرجو تأكيد الطلب والبدء بالتجهيز. شكراً 🌸";
@@ -349,16 +356,38 @@ window.removeCartItem = function (idx) {
 };
 
 window.addToCart = function (product) {
+    if (!product) return;
+    const isBox = (typeof isSpecBoxItem === 'function') ? isSpecBoxItem(product) : ((product.id === 33) || (product.category === 'specBox') || String(product.name || '').includes('بوكس'));
+    let prodPrice = product.price;
+    if (isBox) {
+        prodPrice = "السعر حسب الاختيار والتنسيق";
+    } else if (!prodPrice || isNaN(parseFloat(prodPrice))) {
+        prodPrice = "السعر حسب الاختيار والتنسيق";
+    } else {
+        prodPrice = parseFloat(prodPrice);
+    }
+
     const existing = window.cart.find(function (p) { return p.id === product.id; });
     if (existing) {
         existing.qty += 1;
+        if (isBox) {
+            existing.price = "السعر حسب الاختيار والتنسيق";
+        }
         showToast("تمت إضافة قطعة أخرى إلى السلة ✨");
     } else {
-        window.cart.push({ id: product.id, name: product.name, img: product.img, price: product.price, qty: 1 });
-        showToast("تمت إضافة المنتج إلى سلتكِ 🛍️");
+        window.cart.push({
+            id: product.id,
+            name: product.name,
+            img: product.img,
+            price: prodPrice,
+            category: product.category || (isBox ? 'specBox' : ''),
+            qty: 1
+        });
+        showToast(isBox ? "تمت إضافة بوكس الهدايا إلى سلتكِ 🛍️" : "تمت إضافة المنتج إلى سلتكِ 🛍️");
     }
     saveCart();
     updateBadges();
+    if (typeof renderCart === 'function') renderCart();
 };
 
 // ===== Favorites Drawer =====
@@ -615,7 +644,7 @@ function openModal(product) {
 
     var priceHtml = '';
     if (isBox) {
-        priceHtml = '<div class="modal-specbox-pricing"><p class="modal-price">يبدأ من 300 <span>ج.م</span></p><p class="modal-price-note"><i class="fa-solid fa-wand-magic-sparkles"></i> السعر النهائي حسب عدد ونوع قطع الصابون والفواحات المختارة</p></div>';
+        priceHtml = '<div class="modal-specbox-pricing"><p class="modal-price" style="font-size:18px !important;">السعر السعر حسب الاختيار والتنسيق</p><p class="modal-price-note"><i class="fa-solid fa-wand-magic-sparkles"></i> تفصيل مخصص بالكامل حسب القطع والروائح التي تختارينها</p></div>';
     } else if (isNum) {
         priceHtml = '<p class="modal-price">' + num + ' <span>ج.م</span></p>';
     } else if (hasVal(product.price)) {
@@ -628,8 +657,11 @@ function openModal(product) {
 
     var modalActionsHtml = isBox
         ? `<div class="modal-actions">
-            <a class="modal-wa-order specbox-wa-fullbtn" href="${waUrl}" target="_blank" rel="noopener">
-                <i class="fa-brands fa-whatsapp"></i> نسّقي واطلبي بوكسكِ الآن
+            <button class="modal-add-cart" id="base-modal-add-cart" type="button">
+                <i class="fa-solid fa-cart-plus"></i> أضيفيه للسلة
+            </button>
+            <a class="modal-wa-order specbox-wa-btn" href="${waUrl}" target="_blank" rel="noopener">
+                <i class="fa-brands fa-whatsapp"></i> نسّقي بالواتساب
             </a>
           </div>`
         : `<div class="modal-actions">
